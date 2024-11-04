@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { auth, signOut } from '@/lib/auth';
 import Image from 'next/image';
 import {
   DropdownMenu,
@@ -10,10 +9,13 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
 
 export async function User() {
-  let session = await auth();
-  let user = session?.user;
+  const supabase = await createClient();
+  let {
+    data: { user }
+  } = await supabase.auth.getUser();
 
   return (
     <DropdownMenu>
@@ -24,7 +26,7 @@ export async function User() {
           className="overflow-hidden rounded-full"
         >
           <Image
-            src={user?.image ?? '/placeholder-user.jpg'}
+            src={'/placeholder-user.jpg'}
             width={36}
             height={36}
             alt="Avatar"
@@ -43,7 +45,7 @@ export async function User() {
             <form
               action={async () => {
                 'use server';
-                await signOut();
+                await supabase.auth.signOut();
               }}
             >
               <button type="submit">Sign Out</button>

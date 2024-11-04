@@ -10,5 +10,8 @@ export default {
         hostname: '*.public.blob.vercel-storage.com'
       }
     ]
+  },
+  experimental: {
+    optimizePackageImports: ['@mantine/core', '@mantine/hooks']
   }
 };

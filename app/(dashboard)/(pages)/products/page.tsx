@@ -6,9 +6,21 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { createClient } from '@/lib/supabase/server';
+import { ProductsTable } from 'app/(dashboard)/(pages)/products/(components)/ProductsTable';
 import { PlusCircle } from 'lucide-react';
 
-export default function CustomersPage() {
+export default async function CustomersPage() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from('products').select();
+
+  if (error) {
+    throw error;
+  }
+
+  const addProduct = () => {};
+
   return (
     <Card>
       <CardHeader className="flex-row justify-between">
@@ -19,12 +31,14 @@ export default function CustomersPage() {
           </CardDescription>
         </div>
         <div>
-          <Button className="flex gap-1">
+          <Button onClick={addProduct} className="flex gap-1">
             <PlusCircle /> <span>Mahsulot qo'shish</span>
           </Button>
         </div>
       </CardHeader>
-      <CardContent>table</CardContent>
+      <CardContent>
+        <ProductsTable products={data} />
+      </CardContent>
     </Card>
   );
 }
