@@ -7,7 +7,9 @@
   },
   "dependencies": {
     "@mantine/core": "^7.13.4",
+    "@mantine/form": "^7.13.4",
     "@mantine/hooks": "^7.13.4",
+    "@mantine/notifications": "^7.13.4",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
@@ -39,7 +41,8 @@
     "tailwindcss-animate": "^1.0.7",
     "type-fest": "^4.26.1",
     "typescript": "5.5.3",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.1"
   },
   "prettier": {
     "arrowParens": "always",

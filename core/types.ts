@@ -1,0 +1,3 @@
+export enum MODAL_TYPES {
+  ADD_PRODUCT = 'ADD_PRODUCT'
+}

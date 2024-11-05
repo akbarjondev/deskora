@@ -13,7 +13,10 @@ export default [
   // pluginReact.configs.flat.recommended,
   {
     rules: {
-      'no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' }
+      ],
       'no-console': ['error', { allow: ['warn', 'error'] }]
     }
   }

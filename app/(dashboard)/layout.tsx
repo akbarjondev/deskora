@@ -10,14 +10,6 @@ import {
   Users2
 } from 'lucide-react';
 
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator
-} from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
@@ -26,7 +18,6 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip';
 import { User } from './(components)/user';
-import { VercelLogo } from '@/components/icons';
 import Providers from './(components)/providers';
 import { NavItem } from './(components)/nav-item';
 import { SearchInput } from './(components)/search';
