@@ -1,37 +1,82 @@
-import { Button } from '@/components/ui/button';
+'use client';
+
+import { useActionState } from 'react';
+
+import { login } from './actions';
 import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { signIn } from '@/lib/auth';
+  TextInput,
+  PasswordInput,
+  Paper,
+  Title,
+  Container,
+  Button,
+  Text,
+  Group
+} from '@mantine/core';
 
 export default function LoginPage() {
+  const [stateLogin, formLoginAction, pending] = useActionState(login, {
+    message: ''
+  });
+
+  // const [stateSignUp, formSignUpAction, pendingSignUp] = useActionState(
+  //   signup,
+  //   {
+  //     message: ''
+  //   }
+  // );
+
   return (
-    <div className="min-h-screen flex justify-center items-start md:items-center p-8">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            This demo uses GitHub for authentication.
-          </CardDescription>
-        </CardHeader>
-        <CardFooter>
-          <form
-            action={async () => {
-              'use server';
-              await signIn('github', {
-                redirectTo: '/'
-              });
-            }}
-            className="w-full"
-          >
-            <Button className="w-full">Sign in with GitHub</Button>
-          </form>
-        </CardFooter>
-      </Card>
-    </div>
+    <form>
+      <Container size={420} my={80}>
+        <Title>Ish stoliga xush kelibsiz</Title>
+        <Text c="dimmed" size="sm" align="center" mt={5}>
+          Hisobingizga kirish uchun ma'lumotlaringizni kiriting
+        </Text>
+
+        {stateLogin.message && (
+          <Text c={'red'} size="sm" align="center" mt={5}>
+            {stateLogin.message}
+          </Text>
+        )}
+
+        <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+          <TextInput
+            name="email"
+            label="E-mail"
+            placeholder="siz@mail.com"
+            required
+            autoComplete="off"
+          />
+          <PasswordInput
+            name="password"
+            label="Parol"
+            placeholder="Sizning parol"
+            mt="md"
+            required
+            autoComplete="off"
+          />
+          <Group>
+            <Button
+              fullWidth
+              mt="xl"
+              type="submit"
+              formAction={formLoginAction}
+              disabled={pending}
+            >
+              Kirish
+            </Button>
+            {/* <Button
+              fullWidth
+              mt="sm"
+              type="submit"
+              formAction={formSignUpAction}
+            >
+              Ro'yhatdan o'tish
+            </Button> */}
+          </Group>
+        </Paper>
+      </Container>
+    </form>
   );
 }

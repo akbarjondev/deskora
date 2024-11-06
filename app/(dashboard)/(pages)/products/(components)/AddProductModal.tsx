@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button, Modal, Textarea, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
+import { useQueryClient } from '@tanstack/react-query';
 import { errors } from 'core/consts';
 import { closeModal, useModalStore } from 'store/useModalStore';
 
@@ -16,6 +17,7 @@ const supabase = createClient();
 
 export const AddProductModal = () => {
   const opened = useModalStore((state) => state.current) === 'ADD_PRODUCT';
+  const queryClient = useQueryClient();
 
   const form = useForm<FormProps>({
     mode: 'uncontrolled',
@@ -37,10 +39,24 @@ export const AddProductModal = () => {
     });
 
     // success
-    // if(status)
+    if (status === 201) {
+      showNotification({
+        message: "Mahsulot qo'shildi",
+        color: 'green'
+      });
+
+      // close modal
+      closeModal();
+
+      // revalidate products
+      queryClient.refetchQueries({
+        queryKey: ['products'],
+        exact: true
+      });
+    }
 
     // showing error
-    if (status !== 200) {
+    if (status !== 201) {
       showNotification({
         title: 'Xatolik!',
         message: errors[status],
