@@ -1,12 +1,13 @@
 'use client';
 
 import { createClient } from '@/lib/supabase/client';
-import { Tables } from '@/lib/supabase/database-generated.types';
 import { Table } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
+import { Tables } from 'core/database.types';
 import { PropsWithChildren } from 'react';
 
 const supabase = createClient();
+
 export const ProductsTable = ({
   products
 }: PropsWithChildren<{
@@ -23,7 +24,7 @@ export const ProductsTable = ({
   });
 
   const rows = (data || []).map((element) => (
-    <Table.Tr key={element.name}>
+    <Table.Tr key={element.id}>
       <Table.Td>{element.name}</Table.Td>
       <Table.Td>{element.description}</Table.Td>
     </Table.Tr>

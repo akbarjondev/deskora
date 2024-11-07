@@ -2,17 +2,17 @@
 
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/icons';
 import { Search } from 'lucide-react';
+import { Input } from '@mantine/core';
 
 export function SearchInput() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   function searchAction(formData: FormData) {
-    let value = formData.get('q') as string;
-    let params = new URLSearchParams({ q: value });
+    const value = formData.get('q') as string;
+    const params = new URLSearchParams({ q: value });
     startTransition(() => {
       router.replace(`/?${params.toString()}`);
     });

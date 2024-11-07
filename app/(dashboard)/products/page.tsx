@@ -6,9 +6,9 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/server';
-import { AddProductButton } from 'app/(dashboard)/(pages)/products/(components)/AddProductButton';
-import { AddProductModal } from 'app/(dashboard)/(pages)/products/(components)/AddProductModal';
-import { ProductsTable } from 'app/(dashboard)/(pages)/products/(components)/ProductsTable';
+import { AddProductModal } from '@/components/dashboard/products/AddProductModal';
+import { ProductsTable } from '@/components/dashboard/products/ProductsTable';
+import { AddProductButton } from '@/components/dashboard/products/AddProductButton';
 
 export default async function CustomersPage() {
   const supabase = await createClient();

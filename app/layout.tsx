@@ -1,13 +1,13 @@
-import './globals.css';
+import '@/assets/globals.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
-import { Providers } from 'app/(components)/Providers';
+import { Providers } from '@/components/providers/Providers';
 import { Notifications } from '@mantine/notifications';
 
 export const metadata = {
-  title: 'Ish stoli | Mebel'
+  title: 'Yordamchi | Mebel'
 };
 
 export default function RootLayout({

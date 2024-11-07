@@ -17,11 +17,11 @@ import {
   TooltipContent,
   TooltipTrigger
 } from '@/components/ui/tooltip';
-import { User } from './(components)/user';
-import Providers from './(components)/providers';
-import { NavItem } from './(components)/nav-item';
-import { SearchInput } from './(components)/search';
+import { User } from '../../components/dashboard/navigation/user';
+import { NavItem } from '../../components/dashboard/navigation/nav-item';
+import { SearchInput } from '../../components/dashboard/navigation/search';
 import { ROUTES } from 'core/consts';
+import { Providers } from '@/components/providers/Providers';
 
 export default function DashboardLayout({
   children

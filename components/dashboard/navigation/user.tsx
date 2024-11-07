@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { signOut } from 'app/(dashboard)/actions';
 
 export async function User() {
   const supabase = await createClient();
@@ -35,25 +36,19 @@ export async function User() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>Akkountim</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
+        <DropdownMenuItem>Sozlamalar</DropdownMenuItem>
         <DropdownMenuSeparator />
         {user ? (
           <DropdownMenuItem>
-            <form
-              action={async () => {
-                'use server';
-                await supabase.auth.signOut();
-              }}
-            >
-              <button type="submit">Sign Out</button>
+            <form action={signOut}>
+              <button type="submit">Chiqish</button>
             </form>
           </DropdownMenuItem>
         ) : (
           <DropdownMenuItem>
-            <Link href="/login">Sign In</Link>
+            <Link href="/login">Kirish</Link>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
