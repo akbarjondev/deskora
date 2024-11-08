@@ -16,8 +16,9 @@ export const useModalStore = create<ModalStoreProps>((set) => ({
   }
 }));
 
-export const openModal = (type: keyof typeof MODAL_TYPES) => {
-  useModalStore.getState().setModal({ current: type });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const openModal = (type: keyof typeof MODAL_TYPES, data?: any) => {
+  useModalStore.getState().setModal({ current: type, data });
 };
 
 export const closeModal = () => {
