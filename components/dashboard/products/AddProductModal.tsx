@@ -6,6 +6,7 @@ import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import { useQueryClient } from '@tanstack/react-query';
 import { errors } from 'core/consts';
+import { memo, useEffect, useMemo } from 'react';
 import { closeModal, useModalStore } from 'store/useModalStore';
 
 interface FormProps {
@@ -15,16 +16,22 @@ interface FormProps {
 
 const supabase = createClient();
 
-export const AddProductModal = () => {
-  const opened = useModalStore((state) => state.current) === 'ADD_PRODUCT';
+const initialValues = {
+  name: '',
+  description: ''
+};
+
+export const AddProductModal = memo(() => {
+  const isOpen = useModalStore((state) => state.current) === 'ADD_PRODUCT';
+  const data = useModalStore((state) => state.data);
   const queryClient = useQueryClient();
+
+  const productId: number | undefined = data?.id;
+  const defaultValues: typeof initialValues | undefined = data?.defaultValues;
 
   const form = useForm<FormProps>({
     mode: 'uncontrolled',
-    initialValues: {
-      name: '',
-      description: ''
-    },
+    initialValues,
     validate: {
       name: (value) =>
         value.length > 2
@@ -33,17 +40,39 @@ export const AddProductModal = () => {
     }
   });
 
-  const handleSubmit = async (values: FormProps) => {
-    const { status } = await supabase.from('products').insert({
-      ...values
-    });
+  // if modal is used for edit, set values
+  useEffect(() => {
+    if (productId && defaultValues) {
+      form.setValues(defaultValues);
+    }
+  }, [productId, defaultValues]);
 
-    // success
-    if (status === 201) {
-      showNotification({
-        message: "Mahsulot qo'shildi",
-        color: 'green'
-      });
+  const handleSubmit = async (values: FormProps) => {
+    try {
+      if (!productId) {
+        await supabase.from('products').insert({
+          ...values
+        });
+
+        // create success
+        showNotification({
+          message: "Mahsulot qo'shildi",
+          color: 'green'
+        });
+      } else {
+        await supabase
+          .from('products')
+          .update({
+            ...values
+          })
+          .eq('id', productId);
+
+        // edit success
+        showNotification({
+          message: 'Mahsulot tahrirlandi',
+          color: 'green'
+        });
+      }
 
       // close modal
       closeModal();
@@ -53,22 +82,22 @@ export const AddProductModal = () => {
         queryKey: ['products'],
         exact: true
       });
-    }
-
-    // showing error
-    if (status !== 201) {
+    } catch (error) {
+      // showing error
       showNotification({
         title: 'Xatolik!',
-        message: errors[status],
+        message: errors[400],
         color: 'red'
       });
+
+      console.error(error);
     }
   };
 
   return (
     <Modal
       radius={'md'}
-      opened={opened}
+      opened={isOpen}
       onClose={closeModal}
       title="Mahsulot qo'shish"
     >
@@ -92,4 +121,4 @@ export const AddProductModal = () => {
       </form>
     </Modal>
   );
-};
+});
