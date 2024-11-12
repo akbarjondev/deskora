@@ -90,7 +90,7 @@ export const AddProductModal = memo(() => {
         color: 'red'
       });
 
-      console.error(error);
+      console.error('add product error:', error);
     }
   };
 
