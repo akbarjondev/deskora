@@ -59,6 +59,9 @@ export const AddProductModal = memo(() => {
           message: "Mahsulot qo'shildi",
           color: 'green'
         });
+
+        // clear form
+        form.reset();
       } else {
         await supabase
           .from('products')
