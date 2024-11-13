@@ -1,7 +1,6 @@
 'use client';
 
 import { ConfirmModal } from '@/components/dashboard/common/ConfirmModal';
-import { AddProductModal } from '@/components/dashboard/products/AddProductModal';
 import { SettingsPopover } from '@/components/dashboard/products/SettingsPopover';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
@@ -13,6 +12,7 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
@@ -90,6 +90,7 @@ export const Products = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       pagination
