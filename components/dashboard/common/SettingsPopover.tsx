@@ -21,7 +21,7 @@ export const SettingsPopover = ({ onDelete, onEdit }: Props) => {
       <Popover.Dropdown className="flex flex-col gap-2 items-start">
         <Button
           color="dark"
-          leftSection={<PencilIcon size={20} />}
+          leftSection={<PencilIcon size={16} />}
           variant="transparent"
           size="sm"
           p={0}
@@ -33,7 +33,7 @@ export const SettingsPopover = ({ onDelete, onEdit }: Props) => {
         </Button>
         <Button
           color="red"
-          leftSection={<TrashIcon size={20} />}
+          leftSection={<TrashIcon size={16} />}
           variant="transparent"
           size="sm"
           p={0}

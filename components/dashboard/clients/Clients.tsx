@@ -21,17 +21,17 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { openModal } from 'store/useModalStore';
 
-type ProductType = Tables<'products'>;
-const columnHelper = createColumnHelper<ProductType>();
-const defaultData: ProductType[] = [];
+type ClientType = Tables<'clients'>;
+const columnHelper = createColumnHelper<ClientType>();
+const defaultData: ClientType[] = [];
 
 const supabase = createClient();
 
 interface Props {
-  products: ProductType[];
+  clients: ClientType[];
 }
 
-export const Products = ({ products }: Props) => {
+export const Clients = ({ clients }: Props) => {
   const [opened, { close, open }] = useDisclosure();
   const [itemId, setItemId] = useState<number>();
   const [sorting, setSorting] = useState([
@@ -48,7 +48,10 @@ export const Products = ({ products }: Props) => {
         header: 'Id'
       }),
       columnHelper.accessor('name', {
-        header: 'Mahsulot nomi'
+        header: 'Mijoz nomi'
+      }),
+      columnHelper.accessor('contact', {
+        header: 'Tel raqam'
       }),
       columnHelper.accessor('description', {
         header: 'Sharh'
@@ -62,7 +65,7 @@ export const Products = ({ products }: Props) => {
               setItemId(info.row.original.id);
             }}
             onEdit={() => {
-              openModal('ADD_PRODUCT', {
+              openModal('ADD_CLIENT', {
                 id: info.row.original.id,
                 defaultValues: {
                   ...info.row.original
@@ -77,13 +80,13 @@ export const Products = ({ products }: Props) => {
   );
 
   const { data, refetch } = useQuery({
-    queryKey: ['products'],
+    queryKey: ['clients'],
     queryFn: async () => {
-      const { data } = await supabase.from('products').select();
+      const { data } = await supabase.from('clients').select();
 
       return data;
     },
-    initialData: products
+    initialData: clients
   });
 
   const table = useReactTable({
@@ -102,7 +105,7 @@ export const Products = ({ products }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await supabase.from('products').delete().eq('id', id);
+      await supabase.from('clients').delete().eq('id', id);
 
       showNotification({
         message: "Ma'lumot o'chirildi.",
@@ -116,7 +119,7 @@ export const Products = ({ products }: Props) => {
         message: "Ma'lumotni o'chirishda xatolik.",
         color: 'red'
       });
-      console.error('delete product error:', error);
+      console.error('delete client error:', error);
     }
   };
 
@@ -131,18 +134,16 @@ export const Products = ({ products }: Props) => {
                   className={cn(header.column.getCanSort() && 'cursor-pointer')}
                   onClick={header.column.getToggleSortingHandler()}
                 >
-                  {header.isPlaceholder ? null : (
-                    <span className="flex items-center gap-1">
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                      {{
-                        asc: <ArrowUp size={16} />,
-                        desc: <ArrowDown size={16} />
-                      }[header.column.getIsSorted() as string] ?? null}
-                    </span>
-                  )}
+                  <span className="flex items-center gap-1">
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                    {{
+                      asc: <ArrowUp size={16} />,
+                      desc: <ArrowDown size={16} />
+                    }[header.column.getIsSorted() as string] ?? null}
+                  </span>
                 </Table.Th>
               ))}
             </Table.Tr>

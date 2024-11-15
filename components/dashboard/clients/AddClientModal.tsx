@@ -11,6 +11,7 @@ import { closeModal, useModalStore } from 'store/useModalStore';
 
 interface FormProps {
   name: string;
+  contact: string;
   description?: string;
 }
 
@@ -18,45 +19,40 @@ const supabase = createClient();
 
 const initialValues = {
   name: '',
+  contact: '',
   description: ''
 };
 
-export const AddProductModal = memo(() => {
-  const isOpen = useModalStore((state) => state.current) === 'ADD_PRODUCT';
+export const AddClientModal = memo(() => {
+  const isOpen = useModalStore((state) => state.current) === 'ADD_CLIENT';
   const data = useModalStore((state) => state.data);
   const queryClient = useQueryClient();
 
-  const productId: number | undefined = data?.id;
+  const clientId: number | undefined = data?.id;
   const defaultValues: typeof initialValues | undefined = data?.defaultValues;
 
   const form = useForm<FormProps>({
     mode: 'uncontrolled',
-    initialValues,
-    validate: {
-      name: (value) =>
-        value.length > 2
-          ? null
-          : "Mahsulot nomi kamida 2 harfdan iborat bo'lishi kerak"
-    }
+    initialValues
   });
 
   // if modal is used for edit, set values
   useEffect(() => {
-    if (productId && defaultValues) {
+    if (clientId && defaultValues) {
       form.setValues(defaultValues);
     }
-  }, [productId, defaultValues]);
+  }, [clientId, defaultValues]);
 
   const handleSubmit = async (values: FormProps) => {
     try {
-      if (!productId) {
-        await supabase.from('products').insert({
+      if (!clientId) {
+        await supabase.from('clients').insert({
           ...values
         });
 
         // create success
         showNotification({
-          message: "Mahsulot qo'shildi",
+          message: "Mijoz qo'shildi",
           color: 'green'
         });
 
@@ -64,15 +60,15 @@ export const AddProductModal = memo(() => {
         form.reset();
       } else {
         await supabase
-          .from('products')
+          .from('clients')
           .update({
             ...values
           })
-          .eq('id', productId);
+          .eq('id', clientId);
 
         // edit success
         showNotification({
-          message: 'Mahsulot tahrirlandi',
+          message: 'Mijoz tahrirlandi',
           color: 'green'
         });
       }
@@ -80,9 +76,9 @@ export const AddProductModal = memo(() => {
       // close modal
       closeModal();
 
-      // revalidate products
+      // revalidate clients
       queryClient.refetchQueries({
-        queryKey: ['products'],
+        queryKey: ['clients'],
         exact: true
       });
     } catch (error) {
@@ -93,7 +89,7 @@ export const AddProductModal = memo(() => {
         color: 'red'
       });
 
-      console.error('add product error:', error);
+      console.error('add client error:', error);
     }
   };
 
@@ -104,7 +100,7 @@ export const AddProductModal = memo(() => {
       onClose={closeModal}
       title={
         <Title component={'p'} size={'lg'}>
-          Mahsulot qo'shish
+          Mijoz qo'shish
         </Title>
       }
     >
@@ -117,6 +113,12 @@ export const AddProductModal = memo(() => {
           required
           key={form.key('name')}
           {...form.getInputProps('name')}
+        />
+        <TextInput
+          label="Tel raqami"
+          required
+          key={form.key('contact')}
+          {...form.getInputProps('contact')}
         />
         <Textarea
           label="Sharh yozing (ixtiyoriy)"
