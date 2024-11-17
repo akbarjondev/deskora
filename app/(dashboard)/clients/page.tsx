@@ -1,6 +1,5 @@
 import { AddClientButton } from '@/components/dashboard/clients/AddClientButton';
 import { AddClientModal } from '@/components/dashboard/clients/AddClientModal';
-import { Clients } from '@/components/dashboard/clients/Clients';
 import {
   Card,
   CardContent,
@@ -9,6 +8,11 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/server';
+import dynamic from 'next/dynamic';
+
+const Clients = dynamic(() =>
+  import('@/components/dashboard/clients/Clients').then((mod) => mod.Clients)
+);
 
 export default async function CLientsPage() {
   const supabase = await createClient();

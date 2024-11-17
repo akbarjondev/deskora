@@ -6,9 +6,13 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/server';
-import { Products } from '@/components/dashboard/products/Products';
 import { AddProductButton } from '@/components/dashboard/products/AddProductButton';
 import { AddProductModal } from '@/components/dashboard/products/AddProductModal';
+import dynamic from 'next/dynamic';
+
+const Products = dynamic(() =>
+  import('@/components/dashboard/products/Products').then((mod) => mod.Products)
+);
 
 export default async function CustomersPage() {
   const supabase = await createClient();
