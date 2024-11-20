@@ -17,21 +17,27 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { Tables } from 'core/database.types';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpDown
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { openModal } from 'store/useModalStore';
 
-type ClientType = Tables<'clients'>;
+type ClientType = Tables<'customers'>;
 const columnHelper = createColumnHelper<ClientType>();
 const defaultData: ClientType[] = [];
 
 const supabase = createClient();
 
 interface Props {
-  clients: ClientType[];
+  customers: ClientType[];
 }
 
-export const Clients = ({ clients }: Props) => {
+export const Clients = ({ customers }: Props) => {
   const [opened, { close, open }] = useDisclosure();
   const [itemId, setItemId] = useState<number>();
   const [sorting, setSorting] = useState([
@@ -50,11 +56,11 @@ export const Clients = ({ clients }: Props) => {
       columnHelper.accessor('name', {
         header: 'Mijoz nomi'
       }),
-      columnHelper.accessor('contact', {
+      columnHelper.accessor('phone', {
         header: 'Tel raqam'
       }),
-      columnHelper.accessor('description', {
-        header: 'Sharh'
+      columnHelper.accessor('address', {
+        header: 'Manzil'
       }),
       columnHelper.display({
         header: 'Sozlama',
@@ -80,13 +86,13 @@ export const Clients = ({ clients }: Props) => {
   );
 
   const { data, refetch } = useQuery({
-    queryKey: ['clients'],
+    queryKey: ['customers'],
     queryFn: async () => {
-      const { data } = await supabase.from('clients').select();
+      const { data } = await supabase.from('customers').select();
 
       return data;
     },
-    initialData: clients
+    initialData: customers
   });
 
   const table = useReactTable({
@@ -105,7 +111,7 @@ export const Clients = ({ clients }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await supabase.from('clients').delete().eq('id', id);
+      await supabase.from('customers').delete().eq('id', id);
 
       showNotification({
         message: "Ma'lumot o'chirildi.",
@@ -129,23 +135,29 @@ export const Clients = ({ clients }: Props) => {
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Tr>
-              {headerGroup.headers.map((header) => (
-                <Table.Th
-                  className={cn(header.column.getCanSort() && 'cursor-pointer')}
-                  onClick={header.column.getToggleSortingHandler()}
-                >
-                  <span className="flex items-center gap-1">
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                    {{
-                      asc: <ArrowUp size={16} />,
-                      desc: <ArrowDown size={16} />
-                    }[header.column.getIsSorted() as string] ?? null}
-                  </span>
-                </Table.Th>
-              ))}
+              {headerGroup.headers.map((header) => {
+                const sorted = header.column.getIsSorted();
+                const canSort = header.column.getCanSort();
+
+                return (
+                  <Table.Th
+                    className={cn(canSort && 'cursor-pointer')}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    <span className="flex items-center gap-1">
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {canSort && !sorted && <ArrowUpDown size={16} />}
+                      {{
+                        asc: <ArrowUp size={16} />,
+                        desc: <ArrowDown size={16} />
+                      }[sorted as string] ?? null}
+                    </span>
+                  </Table.Th>
+                );
+              })}
             </Table.Tr>
           ))}
         </Table.Thead>

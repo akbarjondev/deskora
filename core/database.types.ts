@@ -9,48 +9,60 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      clients: {
+      customers: {
         Row: {
-          contact: string | null
-          created_at: string
-          description: string | null
+          address: string | null
+          created_at: string | null
           id: number
           name: string | null
+          phone: string | null
+          updated_at: string | null
         }
         Insert: {
-          contact?: string | null
-          created_at?: string
-          description?: string | null
-          id?: number
+          address?: string | null
+          created_at?: string | null
+          id?: never
           name?: string | null
+          phone?: string | null
+          updated_at?: string | null
         }
         Update: {
-          contact?: string | null
-          created_at?: string
-          description?: string | null
-          id?: number
+          address?: string | null
+          created_at?: string | null
+          id?: never
           name?: string | null
+          phone?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
       products: {
         Row: {
-          created_at: string
+          created_at: string | null
           description: string | null
           id: number
-          name: string | null
+          name: string
+          price: number
+          stock: number
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
-          id?: number
-          name?: string | null
+          id?: never
+          name: string
+          price: number
+          stock: number
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
-          id?: number
-          name?: string | null
+          id?: never
+          name?: string
+          price?: number
+          stock?: number
+          updated_at?: string | null
         }
         Relationships: []
       }

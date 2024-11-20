@@ -17,7 +17,13 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { Tables } from 'core/database.types';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpDown
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { openModal } from 'store/useModalStore';
 
@@ -49,6 +55,12 @@ export const Products = ({ products }: Props) => {
       }),
       columnHelper.accessor('name', {
         header: 'Mahsulot nomi'
+      }),
+      columnHelper.accessor('price', {
+        header: 'Narxi'
+      }),
+      columnHelper.accessor('stock', {
+        header: 'Miqdori'
       }),
       columnHelper.accessor('description', {
         header: 'Sharh'
@@ -126,25 +138,29 @@ export const Products = ({ products }: Props) => {
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Tr>
-              {headerGroup.headers.map((header) => (
-                <Table.Th
-                  className={cn(header.column.getCanSort() && 'cursor-pointer')}
-                  onClick={header.column.getToggleSortingHandler()}
-                >
-                  {header.isPlaceholder ? null : (
+              {headerGroup.headers.map((header) => {
+                const sorted = header.column.getIsSorted();
+                const canSort = header.column.getCanSort();
+
+                return (
+                  <Table.Th
+                    className={cn(canSort && 'cursor-pointer')}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
                     <span className="flex items-center gap-1">
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
+                      {canSort && !sorted && <ArrowUpDown size={16} />}
                       {{
                         asc: <ArrowUp size={16} />,
                         desc: <ArrowDown size={16} />
-                      }[header.column.getIsSorted() as string] ?? null}
+                      }[sorted as string] ?? null}
                     </span>
-                  )}
-                </Table.Th>
-              ))}
+                  </Table.Th>
+                );
+              })}
             </Table.Tr>
           ))}
         </Table.Thead>

@@ -1,5 +1,6 @@
 'use client';
 
+import { Tables } from '@/core/database.types';
 import { createClient } from '@/lib/supabase/client';
 import { Button, Modal, Textarea, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -9,15 +10,14 @@ import { errors } from 'core/consts';
 import { memo, useEffect } from 'react';
 import { closeModal, useModalStore } from 'store/useModalStore';
 
-interface FormProps {
-  name: string;
-  description?: string;
-}
+type FormProps = Omit<Tables<'products'>, 'id' | 'created_at' | 'updated_at'>;
 
 const supabase = createClient();
 
-const initialValues = {
+const initialValues: FormProps = {
   name: '',
+  price: 0,
+  stock: 0,
   description: ''
 };
 
@@ -31,13 +31,7 @@ export const AddProductModal = memo(() => {
 
   const form = useForm<FormProps>({
     mode: 'uncontrolled',
-    initialValues,
-    validate: {
-      name: (value) =>
-        value.length > 2
-          ? null
-          : "Mahsulot nomi kamida 2 harfdan iborat bo'lishi kerak"
-    }
+    initialValues
   });
 
   // if modal is used for edit, set values
@@ -59,14 +53,14 @@ export const AddProductModal = memo(() => {
           message: "Mahsulot qo'shildi",
           color: 'green'
         });
-
-        // clear form
-        form.reset();
       } else {
         await supabase
           .from('products')
           .update({
-            ...values
+            name: values.name,
+            description: values.description,
+            price: values.price,
+            stock: values.stock
           })
           .eq('id', productId);
 
@@ -94,6 +88,8 @@ export const AddProductModal = memo(() => {
       });
 
       console.error('add product error:', error);
+    } finally {
+      form.reset();
     }
   };
 
@@ -117,6 +113,18 @@ export const AddProductModal = memo(() => {
           required
           key={form.key('name')}
           {...form.getInputProps('name')}
+        />
+        <TextInput
+          label="Narxi"
+          required
+          key={form.key('price')}
+          {...form.getInputProps('price')}
+        />
+        <TextInput
+          label="Omborda soni"
+          required
+          key={form.key('stock')}
+          {...form.getInputProps('stock')}
         />
         <Textarea
           label="Sharh yozing (ixtiyoriy)"

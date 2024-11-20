@@ -17,7 +17,7 @@ const Clients = dynamic(() =>
 export default async function CLientsPage() {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.from('clients').select();
+  const { data, error } = await supabase.from('customers').select();
 
   if (error) {
     throw error;
@@ -38,7 +38,7 @@ export default async function CLientsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Clients clients={data} />
+          <Clients customers={data} />
         </CardContent>
       </Card>
       <AddClientModal />

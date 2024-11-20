@@ -1,5 +1,6 @@
 'use client';
 
+import { Tables } from '@/core/database.types';
 import { createClient } from '@/lib/supabase/client';
 import { Button, Modal, Textarea, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -9,18 +10,14 @@ import { errors } from 'core/consts';
 import { memo, useEffect } from 'react';
 import { closeModal, useModalStore } from 'store/useModalStore';
 
-interface FormProps {
-  name: string;
-  contact: string;
-  description?: string;
-}
+type FormProps = Omit<Tables<'customers'>, 'id'>;
 
 const supabase = createClient();
 
-const initialValues = {
+const initialValues: Partial<FormProps> = {
   name: '',
-  contact: '',
-  description: ''
+  phone: '',
+  address: ''
 };
 
 export const AddClientModal = memo(() => {
@@ -31,7 +28,7 @@ export const AddClientModal = memo(() => {
   const clientId: number | undefined = data?.id;
   const defaultValues: typeof initialValues | undefined = data?.defaultValues;
 
-  const form = useForm<FormProps>({
+  const form = useForm<Partial<FormProps>>({
     mode: 'uncontrolled',
     initialValues
   });
@@ -43,28 +40,51 @@ export const AddClientModal = memo(() => {
     }
   }, [clientId, defaultValues]);
 
-  const handleSubmit = async (values: FormProps) => {
+  const showError = ({ message }: { message: string }) => {
+    showNotification({
+      title: 'Xatolik!',
+      message,
+      color: 'red'
+    });
+  };
+
+  const handleSubmit = async (values: Partial<FormProps>) => {
     try {
       if (!clientId) {
-        await supabase.from('clients').insert({
+        const res = await supabase.from('customers').insert({
           ...values
         });
+
+        // Errors like 409: Conflict
+        if (res.error) {
+          showError({
+            message: errors[res.status]
+          });
+          return;
+        }
 
         // create success
         showNotification({
           message: "Mijoz qo'shildi",
           color: 'green'
         });
-
-        // clear form
-        form.reset();
       } else {
-        await supabase
-          .from('clients')
+        const res = await supabase
+          .from('customers')
           .update({
-            ...values
+            address: values.address,
+            name: values.name,
+            phone: values.phone
           })
           .eq('id', clientId);
+
+        // Errors like 409: Conflict
+        if (res.error) {
+          showError({
+            message: errors[res.status]
+          });
+          return;
+        }
 
         // edit success
         showNotification({
@@ -78,7 +98,7 @@ export const AddClientModal = memo(() => {
 
       // revalidate clients
       queryClient.refetchQueries({
-        queryKey: ['clients'],
+        queryKey: ['customers'],
         exact: true
       });
     } catch (error) {
@@ -90,6 +110,8 @@ export const AddClientModal = memo(() => {
       });
 
       console.error('add client error:', error);
+    } finally {
+      form.reset();
     }
   };
 
@@ -117,13 +139,13 @@ export const AddClientModal = memo(() => {
         <TextInput
           label="Tel raqami"
           required
-          key={form.key('contact')}
-          {...form.getInputProps('contact')}
+          key={form.key('phone')}
+          {...form.getInputProps('phone')}
         />
         <Textarea
-          label="Sharh yozing (ixtiyoriy)"
-          key={form.key('description')}
-          {...form.getInputProps('description')}
+          label="Manzil (ixtiyoriy)"
+          key={form.key('address')}
+          {...form.getInputProps('address')}
         />
 
         <Button type="submit">Qo'shish</Button>
