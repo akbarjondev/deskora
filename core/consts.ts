@@ -1,6 +1,7 @@
 export const ROUTES = {
   home: '/',
   orders: '/orders',
+  newOrder: '/orders/new',
   clients: '/clients',
   products: '/products',
   settings: '/settings'

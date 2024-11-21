@@ -60,6 +60,7 @@
   "devDependencies": {
     "@eslint/js": "^9.14.0",
     "@next/eslint-plugin-next": "^15.0.2",
+    "dotenv-cli": "^7.4.3",
     "eslint": "^9.14.0",
     "eslint-plugin-react": "^7.37.2",
     "globals": "^15.12.0",

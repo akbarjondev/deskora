@@ -18,6 +18,13 @@ export default function RootLayout({
   return (
     <html lang="uz">
       <head>
+        {/* Only enable React scanner in Development mode */}
+        {process.env.NODE_ENV === 'development' && (
+          <script
+            src="https://unpkg.com/react-scan/dist/auto.global.js"
+            async
+          />
+        )}
         <ColorSchemeScript />
       </head>
       <body className="flex min-h-screen w-full flex-col">

@@ -36,6 +36,145 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: number
+          order_id: number
+          price_per_unit: number
+          product_id: number
+          quantity: number
+          total_price: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          order_id: number
+          price_per_unit: number
+          product_id: number
+          quantity: number
+          total_price?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          order_id?: number
+          price_per_unit?: number
+          product_id?: number
+          quantity?: number
+          total_price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string | null
+          customer_id: number
+          delivery_address: string | null
+          delivery_date: string | null
+          id: number
+          order_date: string | null
+          payment_method: string | null
+          payment_status: string | null
+          remaining_debt: number | null
+          status: string | null
+          total_paid: number | null
+          total_price: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id: number
+          delivery_address?: string | null
+          delivery_date?: string | null
+          id?: never
+          order_date?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          remaining_debt?: number | null
+          status?: string | null
+          total_paid?: number | null
+          total_price: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: number
+          delivery_address?: string | null
+          delivery_date?: string | null
+          id?: never
+          order_date?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
+          remaining_debt?: number | null
+          status?: string | null
+          total_paid?: number | null
+          total_price?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          description: string | null
+          id: number
+          order_id: number
+          payment_date: string | null
+          payment_type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          order_id: number
+          payment_date?: string | null
+          payment_type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          order_id?: number
+          payment_date?: string | null
+          payment_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           created_at: string | null
