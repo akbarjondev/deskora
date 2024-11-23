@@ -19,7 +19,7 @@ export default async function OrdersNewPage() {
         </div>
       </CardHeader>
       <CardContent>
-        <OrderForm />
+        <OrderForm className="max-w-3xl" />
       </CardContent>
     </Card>
   );
