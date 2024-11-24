@@ -3,15 +3,7 @@
 import { paymentMethodOptions } from '@/core/consts';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import {
-  Badge,
-  Button,
-  Group,
-  Pill,
-  Select,
-  Table,
-  Tooltip
-} from '@mantine/core';
+import { Badge, Button, Group, Select, Table, Tooltip } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   createColumnHelper,
@@ -85,7 +77,7 @@ export const Orders = ({ orders }: IProps) => {
         header: 'Umumiy summa',
         cell: ({ row: { original } }) => (
           <div>
-            {original.total_paid} {original.currency}
+            {original.total_price} {original.currency}
           </div>
         )
       }),
@@ -121,7 +113,7 @@ export const Orders = ({ orders }: IProps) => {
     []
   );
 
-  const { data, refetch } = useQuery({
+  const { data } = useQuery({
     queryKey: ['customers'],
     queryFn: async () => {
       const { data } = await supabase.from('orders').select(`
