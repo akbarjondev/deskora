@@ -33,7 +33,7 @@ export enum PaymentMethod {
   cash = 'cash',
   BNPL = 'BNPL',
   card = 'card',
-  bankTransfer = 'bank_transfer'
+  bank_transfer = 'bank_transfer'
 }
 
 // Extracted Type

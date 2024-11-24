@@ -111,7 +111,11 @@ export const Clients = ({ customers }: Props) => {
 
   const handleDelete = async (id: number) => {
     try {
-      await supabase.from('customers').delete().eq('id', id);
+      const { error } = await supabase.from('customers').delete().eq('id', id);
+
+      if (error) {
+        throw error;
+      }
 
       showNotification({
         message: "Ma'lumot o'chirildi.",
@@ -134,13 +138,14 @@ export const Clients = ({ customers }: Props) => {
       <Table striped withColumnBorders>
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <Table.Tr>
+            <Table.Tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 const sorted = header.column.getIsSorted();
                 const canSort = header.column.getCanSort();
 
                 return (
                   <Table.Th
+                    key={header.id}
                     className={cn(canSort && 'cursor-pointer')}
                     onClick={header.column.getToggleSortingHandler()}
                   >

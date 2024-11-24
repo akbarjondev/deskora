@@ -17,7 +17,7 @@ export const Providers = ({ children }: PropsWithChildren) => {
             locale: 'uz',
             firstDayOfWeek: 1,
             weekendDays: [0],
-            timezone: 'Asia/Tashkent'
+            timezone: 'UTC'
           }}
         >
           {children}

@@ -1,4 +1,5 @@
 import { AddOrderButton } from '@/components/dashboard/orders/AddOrderButton';
+import { Orders } from '@/components/dashboard/orders/Orders';
 import {
   Card,
   CardContent,
@@ -6,8 +7,11 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { getAllOrdersServer } from 'requests/orders/getAllOrders';
 
 export default async function OrdersPage() {
+  const orders = await getAllOrdersServer();
+
   return (
     <Card>
       <CardHeader className="flex-row justify-between">
@@ -21,7 +25,9 @@ export default async function OrdersPage() {
           <AddOrderButton />
         </div>
       </CardHeader>
-      <CardContent></CardContent>
+      <CardContent>
+        <Orders orders={orders} />
+      </CardContent>
     </Card>
   );
 }

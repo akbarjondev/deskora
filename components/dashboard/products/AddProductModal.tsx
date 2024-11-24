@@ -27,6 +27,7 @@ export const AddProductModal = memo(() => {
   const queryClient = useQueryClient();
 
   const productId: number | undefined = data?.id;
+  const isEditForm = !!productId;
   const defaultValues: typeof initialValues | undefined = data?.defaultValues;
 
   const form = useForm<FormProps>({
@@ -100,7 +101,7 @@ export const AddProductModal = memo(() => {
       onClose={closeModal}
       title={
         <Title component={'p'} size={'lg'}>
-          Mahsulot qo'shish
+          {isEditForm ? 'Mahsulotni tahrirlash' : "Mahsulot qo'shish"}
         </Title>
       }
     >
@@ -132,7 +133,7 @@ export const AddProductModal = memo(() => {
           {...form.getInputProps('description')}
         />
 
-        <Button type="submit">Qo'shish</Button>
+        <Button type="submit">{isEditForm ? 'Tahrirlash' : "Qo'shish"}</Button>
       </form>
     </Modal>
   );

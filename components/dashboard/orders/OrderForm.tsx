@@ -3,7 +3,8 @@
 import {
   currencyOptions,
   paymentMethodOptions,
-  paymentStatusOptions
+  paymentStatusOptions,
+  ROUTES
 } from '@/core/consts';
 import { Tables } from '@/core/database.types';
 import { TOrderStatus, TPaymentStatus } from '@/core/types';
@@ -17,13 +18,17 @@ import {
   Select,
   Text,
   Textarea,
-  TextInput
+  TextInput,
+  Title
 } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { randomId } from '@mantine/hooks';
+import { showNotification } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { Asterisk, PackagePlus, PlusCircle, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { getAllCustomers } from 'requests/customers/getAllCustomers';
 
@@ -47,7 +52,11 @@ interface IProps {
   className?: string;
 }
 
+const supabase = createClient();
+
 export const OrderForm = ({ className }: IProps) => {
+  const router = useRouter();
+
   const form = useForm<TOrderFormProps>({
     mode: 'controlled',
     initialValues: {
@@ -61,14 +70,15 @@ export const OrderForm = ({ className }: IProps) => {
       delivery_address: '',
       delivery_date: '',
       // Items
-      products: [
-        {
-          product_id: '0',
-          quantity: '1',
-          price: '0',
-          key: randomId()
-        }
-      ]
+      products: []
+    },
+    validate: {
+      customer_id: (value) => value === 0 && 'Mijozni tanlang',
+      products: {
+        product_id: (value) => value === '0' && 'Mahsulotni tanlang',
+        quantity: (value) => value === '0' && 'Soni kiriting',
+        price: (value) => value === '0' && 'Narxni kiriting'
+      }
     }
   });
 
@@ -88,8 +98,78 @@ export const OrderForm = ({ className }: IProps) => {
     }));
   }, [data]);
 
-  const handleSubmit = (values: TOrderFormProps) => {
-    console.log(values);
+  const handleSubmit = async (values: TOrderFormProps) => {
+    const {
+      customer_id,
+      status,
+      payment_status,
+      payment_method,
+      total_price,
+      total_paid,
+      currency,
+      delivery_address,
+      delivery_date,
+      products
+    } = values;
+
+    try {
+      // first, create order
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          customer_id,
+          status,
+          payment_status,
+          payment_method,
+          total_price,
+          total_paid,
+          currency,
+          delivery_address,
+          delivery_date: delivery_date ?? dayjs().format('YYYY-MM-DD')
+        })
+        .select('*');
+
+      if (orderError || !orderData) {
+        throw orderError;
+      } else {
+        // create order items
+        const orderId = orderData[0].id;
+
+        const productsArray = products.map((item) => ({
+          order_id: orderId,
+          product_id: Number(item.product_id),
+          quantity: Number(item.quantity),
+          price_per_unit: Number(item.price)
+        }));
+
+        const { error: orderItemError } = await supabase
+          .from('order_items')
+          .insert(productsArray);
+
+        if (orderItemError) {
+          console.error('order item error:', orderItemError);
+
+          throw orderItemError;
+        }
+
+        // show success notification
+        showNotification({
+          title: 'Muvaffaqiyat!',
+          message: 'Buyurtma yaratildi...',
+          color: 'green'
+        });
+
+        // redirect to orders page
+        router.push(ROUTES.orders);
+      }
+    } catch (error) {
+      showNotification({
+        title: 'Xatolik!',
+        message: 'Buyurtma yaratilmadi...',
+        color: 'red'
+      });
+      console.error('order error:', error);
+    }
   };
 
   const fields = form
@@ -101,7 +181,7 @@ export const OrderForm = ({ className }: IProps) => {
   // set total price while quantity or price changes
   const totalPrice = form.getValues().products.reduce((acc, item) => {
     const price = parseFloat(item.price);
-    const quantity = parseFloat(item.quantity);
+    const quantity = parseFloat(item.quantity || '0');
 
     return acc + price * quantity;
   }, 0);
@@ -120,8 +200,12 @@ export const OrderForm = ({ className }: IProps) => {
       className={cn('grid grid-cols-2 gap-4', className)}
     >
       <Fieldset
-        legend="Buyurtmachi ma'lumotlari"
-        className="flex flex-col gap-4"
+        legend={
+          <Title component={'p'} size={'lg'}>
+            Mijoz ma'lumotlari
+          </Title>
+        }
+        className="flex flex-col gap-6"
       >
         <Select
           placeholder="Mijoz ismini kiriting"
@@ -135,7 +219,13 @@ export const OrderForm = ({ className }: IProps) => {
         />
       </Fieldset>
 
-      <Fieldset legend="Mahsulot ma'lumotlari">
+      <Fieldset
+        legend={
+          <Title component={'p'} size={'lg'}>
+            Mahsulot ma'lumotlari
+          </Title>
+        }
+      >
         {fields.length === 0 && (
           <Text
             c="dimmed"
@@ -166,7 +256,14 @@ export const OrderForm = ({ className }: IProps) => {
         </Button>
       </Fieldset>
 
-      <Fieldset legend="To'lov ma'lumotlari" className="flex flex-col gap-2">
+      <Fieldset
+        legend={
+          <Title component={'p'} size={'lg'}>
+            To'lov ma'lumotlari
+          </Title>
+        }
+        className="flex flex-col gap-6"
+      >
         <div className="flex gap-2">
           <Select
             className="grow"
@@ -198,15 +295,10 @@ export const OrderForm = ({ className }: IProps) => {
           />
         </div>
 
-        <div className="flex gap-2">
-          <TextInput
-            label="Jami summa"
-            type="number"
-            key={form.key('total_price')}
-            {...form.getInputProps('total_price')}
-            disabled
-            className="grow"
-          />
+        <div className="flex flex-col gap-2">
+          <Text c={'dark'} fw={'bold'} mb={4}>
+            Jami: {totalPrice} {form.getValues().currency}
+          </Text>
 
           <TextInput
             label="To'lanayotgan summa"
@@ -218,40 +310,44 @@ export const OrderForm = ({ className }: IProps) => {
             max={totalPrice}
             className="grow"
           />
-        </div>
-        {remainingDebt > 0 && (
-          <Text c={'red'} fw={'bold'} mb={4}>
-            Qarz: {remainingDebt} {form.getValues().currency}
-          </Text>
-        )}
 
-        {remainingDebt < 0 && (
-          <Text c={'green'} fw={'bold'} mb={4}>
-            Ortiqcha: {remainingDebt} {form.getValues().currency}
-          </Text>
-        )}
+          {remainingDebt > 0 && (
+            <Text c={'red'} fw={'bold'} mb={4}>
+              Qarz: {remainingDebt} {form.getValues().currency}
+            </Text>
+          )}
+
+          {remainingDebt < 0 && (
+            <Text c={'green'} fw={'bold'} mb={4}>
+              Ortiqcha: {remainingDebt} {form.getValues().currency}
+            </Text>
+          )}
+        </div>
       </Fieldset>
 
       <Fieldset
-        legend="Yetkazib berish ma'lumotlari"
-        className="flex flex-col gap-4"
+        legend={
+          <Title component={'p'} size={'lg'}>
+            Yetkazib berish ma'lumotlari
+          </Title>
+        }
+        className="flex flex-col gap-6"
       >
         <Textarea
           resize="vertical"
-          label="Yetkazib berish manzili"
+          label="Manzili"
           key={form.key('delivery_address')}
           {...form.getInputProps('delivery_address')}
         />
 
         <div>
           <Text fw={500} size="sm" className="flex items-center">
-            Yetkazib berish vaqti
+            Vaqti
           </Text>
           <DatePicker
             className="border p-1 rounded-md max-w-min"
             allowDeselect
             locale="uz"
-            defaultValue={new Date()}
             key={form.key('delivery_date')}
             {...form.getInputProps('delivery_date')}
           />
@@ -277,7 +373,6 @@ interface IProductFieldProps {
   form: UseFormReturnType<TOrderFormProps>;
 }
 
-const supabase = createClient();
 const ProductField = ({ item, index, form }: IProductFieldProps) => {
   // fetch products
   const { data: products } = useQuery({
@@ -304,7 +399,7 @@ const ProductField = ({ item, index, form }: IProductFieldProps) => {
   const freshItem = form.getValues().products[index];
 
   return (
-    <div key={item.key} className="flex items-center flex-nowrap gap-1">
+    <div key={item.key} className="flex flex-nowrap gap-1">
       <div>
         {index === 0 && (
           <Text fw={500} size="sm" className="flex items-center">

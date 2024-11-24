@@ -26,6 +26,7 @@ export const AddClientModal = memo(() => {
   const queryClient = useQueryClient();
 
   const clientId: number | undefined = data?.id;
+  const isEditForm = Boolean(clientId);
   const defaultValues: typeof initialValues | undefined = data?.defaultValues;
 
   const form = useForm<Partial<FormProps>>({
@@ -121,8 +122,8 @@ export const AddClientModal = memo(() => {
       opened={isOpen}
       onClose={closeModal}
       title={
-        <Title component={'p'} size={'lg'}>
-          Mijoz qo'shish
+        <Title component={'p'} order={3}>
+          {isEditForm ? 'Mijozni tahrirlash' : "Yangi mijoz qo'shish"}
         </Title>
       }
     >
@@ -148,7 +149,7 @@ export const AddClientModal = memo(() => {
           {...form.getInputProps('address')}
         />
 
-        <Button type="submit">Qo'shish</Button>
+        <Button type="submit">{isEditForm ? 'Tahrirlash' : "Qo'shish"}</Button>
       </form>
     </Modal>
   );

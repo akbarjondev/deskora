@@ -1,12 +1,17 @@
 'use client';
 
-import { ConfirmModal } from '@/components/dashboard/common/ConfirmModal';
-import { SettingsPopover } from '@/components/dashboard/common/SettingsPopover';
+import { paymentMethodOptions } from '@/core/consts';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import { Button, Group, Select, Table } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { showNotification } from '@mantine/notifications';
+import {
+  Badge,
+  Button,
+  Group,
+  Pill,
+  Select,
+  Table,
+  Tooltip
+} from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   createColumnHelper,
@@ -16,7 +21,6 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { Tables } from 'core/database.types';
 import {
   ArrowDown,
   ArrowLeft,
@@ -25,21 +29,18 @@ import {
   ArrowUpDown
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { openModal } from 'store/useModalStore';
-
-type ProductType = Tables<'products'>;
-const columnHelper = createColumnHelper<ProductType>();
-const defaultData: ProductType[] = [];
+import { OrdersWithCustomerAndOrderItems } from 'requests/orders/getAllOrders';
 
 const supabase = createClient();
+const columnHelper =
+  createColumnHelper<OrdersWithCustomerAndOrderItems[number]>();
+const defaultData: OrdersWithCustomerAndOrderItems = [];
 
-interface Props {
-  products: ProductType[];
+interface IProps {
+  orders: OrdersWithCustomerAndOrderItems;
 }
 
-export const Products = ({ products }: Props) => {
-  const [opened, { close, open }] = useDisclosure();
-  const [itemId, setItemId] = useState<number>();
+export const Orders = ({ orders }: IProps) => {
   const [sorting, setSorting] = useState([
     {
       id: 'id',
@@ -53,35 +54,67 @@ export const Products = ({ products }: Props) => {
       columnHelper.accessor('id', {
         header: 'Id'
       }),
-      columnHelper.accessor('name', {
-        header: 'Mahsulot nomi'
+      columnHelper.accessor('customers.name', {
+        id: 'customer_id',
+        header: 'Mijoz',
+        cell: ({ row: { original } }) => (
+          <Tooltip label={original.customers?.phone}>
+            <span>{original.customers?.name}</span>
+          </Tooltip>
+        )
       }),
-      columnHelper.accessor('price', {
-        header: 'Narxi'
+      columnHelper.accessor('order_items', {
+        header: 'Mahsulotlar',
+        cell: ({ row: { original } }) => (
+          <div className="flex gap-1">
+            {original?.order_items?.map((item) => (
+              <div
+                className="flex px-1 py-1 gap-1 bg-slate-500 text-white font-semibold text-sm rounded-full"
+                key={item.id}
+              >
+                {item.products?.name}{' '}
+                <Badge color="lime.5" circle>
+                  {item.quantity}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        )
       }),
-      columnHelper.accessor('stock', {
-        header: 'Miqdori'
+      columnHelper.accessor('total_price', {
+        header: 'Umumiy summa',
+        cell: ({ row: { original } }) => (
+          <div>
+            {original.total_paid} {original.currency}
+          </div>
+        )
       }),
-      columnHelper.accessor('description', {
-        header: 'Sharh'
+      columnHelper.accessor('total_paid', {
+        header: "To'langan summa",
+        cell: ({ row: { original } }) => (
+          <div>
+            {original.total_paid} {original.currency}
+          </div>
+        )
       }),
-      columnHelper.display({
-        header: 'Sozlama',
-        cell: (info) => (
-          <SettingsPopover
-            onDelete={() => {
-              open();
-              setItemId(info.row.original.id);
-            }}
-            onEdit={() => {
-              openModal('ADD_PRODUCT', {
-                id: info.row.original.id,
-                defaultValues: {
-                  ...info.row.original
-                }
-              });
-            }}
-          />
+      columnHelper.accessor('remaining_debt', {
+        header: 'Qolgan qarz',
+        cell: ({ row: { original } }) => (
+          <div>
+            {original.remaining_debt} {original.currency}
+          </div>
+        )
+      }),
+      columnHelper.accessor('payment_method', {
+        header: "To'lov usuli",
+        cell: ({ row: { original } }) => (
+          <div>
+            {
+              paymentMethodOptions.find(
+                (item) => original.payment_method === item.value
+              )?.label
+            }
+          </div>
         )
       })
     ],
@@ -89,13 +122,17 @@ export const Products = ({ products }: Props) => {
   );
 
   const { data, refetch } = useQuery({
-    queryKey: ['products'],
+    queryKey: ['customers'],
     queryFn: async () => {
-      const { data } = await supabase.from('products').select();
+      const { data } = await supabase.from('orders').select(`
+        *,
+        customers (*),
+        order_items (*, products (*))
+        `);
 
       return data;
     },
-    initialData: products
+    initialData: orders
   });
 
   const table = useReactTable({
@@ -111,26 +148,6 @@ export const Products = ({ products }: Props) => {
     onSortingChange: setSorting,
     onPaginationChange: setPagination
   });
-
-  const handleDelete = async (id: number) => {
-    try {
-      await supabase.from('products').delete().eq('id', id);
-
-      showNotification({
-        message: "Ma'lumot o'chirildi.",
-        color: 'green'
-      });
-
-      close();
-      refetch();
-    } catch (error) {
-      showNotification({
-        message: "Ma'lumotni o'chirishda xatolik.",
-        color: 'red'
-      });
-      console.error('delete product error:', error);
-    }
-  };
 
   return (
     <>
@@ -198,17 +215,6 @@ export const Products = ({ products }: Props) => {
           onChange={(value) => table.setPageSize(Number(value))}
         />
       </Group>
-      <ConfirmModal
-        open={opened}
-        onConfirm={() => {
-          if (itemId) handleDelete(itemId);
-        }}
-        onClose={() => {
-          close();
-          setItemId(undefined);
-        }}
-        text="Siz rostdan ma'lumotni o'chirmoqchimisiz?"
-      />
     </>
   );
 };

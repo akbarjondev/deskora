@@ -34,7 +34,7 @@ export const paymentMethodOptions: {
   },
   {
     label: 'Bank orqali',
-    value: 'bankTransfer'
+    value: 'bank_transfer'
   },
   {
     label: "Bo'lib to'lash",

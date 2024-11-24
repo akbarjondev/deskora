@@ -4,9 +4,9 @@ interface IGetAllCustomers {
   search?: string;
 }
 
-export const getAllCustomers = async (props?: IGetAllCustomers) => {
-  const supabase = createClient();
+const supabase = createClient();
 
+export const getAllCustomers = async (props?: IGetAllCustomers) => {
   let query = supabase.from('customers').select('*');
 
   // Apply conditional search only if 'search' is provided
