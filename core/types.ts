@@ -38,3 +38,5 @@ export enum PaymentMethod {
 
 // Extracted Type
 export type TPaymentMethod = keyof typeof PaymentMethod;
+
+export type TCurrency = 'UZS' | 'USD';

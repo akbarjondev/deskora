@@ -42,6 +42,7 @@ CREATE TABLE
     payment_method TEXT CHECK (
       payment_method IN ('cash', 'BNPL', 'card', 'bank_transfer')
     ) DEFAULT 'cash',
+    currency TEXT CHECK (currency IN ('UZS', 'USD')) DEFAULT 'USD',
     delivery_address TEXT,
     delivery_date TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

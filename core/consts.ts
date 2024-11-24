@@ -1,3 +1,4 @@
+import { PaymentMethod, PaymentStatus } from './types';
 export const ROUTES = {
   home: '/',
   orders: '/orders',
@@ -18,3 +19,58 @@ export const errors: Record<number, string> = {
   500: 'Ichki server xatoligi', // Internal Server Error
   503: 'Xizmat mavjud emas' // Service Unavailable
 };
+
+export const paymentMethodOptions: {
+  label: string;
+  value: keyof typeof PaymentMethod;
+}[] = [
+  {
+    label: 'Naqd',
+    value: 'cash'
+  },
+  {
+    label: 'Plastik karta',
+    value: 'card'
+  },
+  {
+    label: 'Bank orqali',
+    value: 'bankTransfer'
+  },
+  {
+    label: "Bo'lib to'lash",
+    value: 'BNPL'
+  }
+];
+
+export const paymentStatusOptions: {
+  label: string;
+  value: keyof typeof PaymentStatus;
+}[] = [
+  {
+    label: "Endi to'lanadi",
+    value: 'pending'
+  },
+  {
+    label: "To'landi",
+    value: 'paid'
+  },
+  {
+    label: 'Qisman',
+    value: 'partial'
+  },
+  {
+    label: "To'lanmadi",
+    value: 'failed'
+  }
+];
+
+export const currencyOptions = [
+  {
+    label: "So'm",
+    value: 'UZS'
+  },
+  {
+    label: 'Dollar',
+    value: 'USD'
+  }
+];
