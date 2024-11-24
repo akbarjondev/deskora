@@ -37,7 +37,7 @@ interface Props {
   customers: ClientType[];
 }
 
-export const Clients = ({ customers }: Props) => {
+const Clients = ({ customers }: Props) => {
   const [opened, { close, open }] = useDisclosure();
   const [itemId, setItemId] = useState<number>();
   const [sorting, setSorting] = useState([
@@ -213,3 +213,5 @@ export const Clients = ({ customers }: Props) => {
     </>
   );
 };
+
+export default Clients;

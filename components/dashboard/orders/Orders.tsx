@@ -13,6 +13,7 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import dayjs from 'dayjs';
 import {
   ArrowDown,
   ArrowLeft,
@@ -32,7 +33,7 @@ interface IProps {
   orders: OrdersWithCustomerAndOrderItems;
 }
 
-export const Orders = ({ orders }: IProps) => {
+const Orders = ({ orders }: IProps) => {
   const [sorting, setSorting] = useState([
     {
       id: 'id',
@@ -72,6 +73,15 @@ export const Orders = ({ orders }: IProps) => {
             ))}
           </div>
         )
+      }),
+      columnHelper.accessor('delivery_date', {
+        header: 'Yetkazish sanasi',
+        cell: ({ row: { original } }) => (
+          <div>{dayjs(original.delivery_date).format('DD.MM.YYYY')}</div>
+        )
+      }),
+      columnHelper.accessor('delivery_address', {
+        header: 'Manzil'
       }),
       columnHelper.accessor('total_price', {
         header: 'Umumiy summa',
@@ -210,3 +220,5 @@ export const Orders = ({ orders }: IProps) => {
     </>
   );
 };
+
+export default Orders;

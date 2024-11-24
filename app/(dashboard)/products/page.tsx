@@ -10,8 +10,8 @@ import { AddProductButton } from '@/components/dashboard/products/AddProductButt
 import { AddProductModal } from '@/components/dashboard/products/AddProductModal';
 import dynamic from 'next/dynamic';
 
-const Products = dynamic(() =>
-  import('@/components/dashboard/products/Products').then((mod) => mod.Products)
+const Products = dynamic(
+  () => import('@/components/dashboard/products/Products')
 );
 
 export default async function CustomersPage() {

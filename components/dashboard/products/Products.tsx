@@ -37,7 +37,7 @@ interface Props {
   products: ProductType[];
 }
 
-export const Products = ({ products }: Props) => {
+const Products = ({ products }: Props) => {
   const [opened, { close, open }] = useDisclosure();
   const [itemId, setItemId] = useState<number>();
   const [sorting, setSorting] = useState([
@@ -212,3 +212,5 @@ export const Products = ({ products }: Props) => {
     </>
   );
 };
+
+export default Products;

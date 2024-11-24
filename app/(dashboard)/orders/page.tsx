@@ -1,5 +1,4 @@
 import { AddOrderButton } from '@/components/dashboard/orders/AddOrderButton';
-import { Orders } from '@/components/dashboard/orders/Orders';
 import {
   Card,
   CardContent,
@@ -7,7 +6,10 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import dynamic from 'next/dynamic';
 import { getAllOrdersServer } from 'requests/orders/getAllOrders';
+
+const Orders = dynamic(() => import('@/components/dashboard/orders/Orders'));
 
 export default async function OrdersPage() {
   const orders = await getAllOrdersServer();
