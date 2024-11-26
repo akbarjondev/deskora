@@ -8,7 +8,7 @@ import { Providers } from '@/components/providers/Providers';
 import { Notifications } from '@mantine/notifications';
 
 export const metadata = {
-  title: 'Yordamchi | Mebel'
+  title: 'Deskora'
 };
 
 export default function RootLayout({
