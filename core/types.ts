@@ -40,3 +40,11 @@ export enum PaymentMethod {
 export type TPaymentMethod = keyof typeof PaymentMethod;
 
 export type TCurrency = 'UZS' | 'USD';
+
+export enum PaymentType {
+  full = 'full',
+  partial = 'partial',
+  debt = 'debt'
+}
+
+export type TPaymentType = keyof typeof PaymentType;

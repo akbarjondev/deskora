@@ -1,4 +1,4 @@
-import { PaymentMethod, PaymentStatus } from './types';
+import { PaymentMethod, PaymentStatus, TPaymentType } from './types';
 export const ROUTES = {
   home: '/',
   orders: '/orders',
@@ -51,7 +51,7 @@ export const paymentStatusOptions: {
     value: 'pending'
   },
   {
-    label: "To'landi",
+    label: "To'liq to'landi",
     value: 'paid'
   },
   {
@@ -72,5 +72,23 @@ export const currencyOptions = [
   {
     label: 'Dollar',
     value: 'USD'
+  }
+];
+
+export const paymentTypeOptions: {
+  label: string;
+  value: TPaymentType;
+}[] = [
+  {
+    label: "To'liq",
+    value: 'full'
+  },
+  {
+    label: 'Qisman',
+    value: 'partial'
+  },
+  {
+    label: 'Qarz',
+    value: 'debt'
   }
 ];

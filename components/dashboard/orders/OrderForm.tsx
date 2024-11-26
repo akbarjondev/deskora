@@ -29,7 +29,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { Asterisk, PackagePlus, PlusCircle, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getAllCustomers } from 'requests/customers/getAllCustomers';
 
 type TProduct = {
@@ -46,6 +46,7 @@ type TOrderFormProps = Omit<
   status: TOrderStatus;
   payment_status: TPaymentStatus;
   products: TProduct[];
+  payment_description?: string;
 };
 
 interface IProps {
@@ -56,6 +57,7 @@ const supabase = createClient();
 
 export const OrderForm = ({ className }: IProps) => {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<TOrderFormProps>({
     mode: 'controlled',
@@ -69,6 +71,7 @@ export const OrderForm = ({ className }: IProps) => {
       currency: 'USD',
       delivery_address: '',
       delivery_date: '',
+      payment_description: '',
       // Items
       products: []
     },
@@ -109,10 +112,13 @@ export const OrderForm = ({ className }: IProps) => {
       currency,
       delivery_address,
       delivery_date,
-      products
+      products,
+      payment_description
     } = values;
 
     try {
+      setIsSubmitting(true);
+
       // first, create order
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
@@ -132,9 +138,18 @@ export const OrderForm = ({ className }: IProps) => {
       if (orderError || !orderData) {
         throw orderError;
       } else {
-        // create order items
         const orderId = orderData[0].id;
 
+        // create payment item
+        const { error: paymentError } = await supabase.from('payments').insert({
+          order_id: orderId,
+          amount: total_paid || 0,
+          payment_type: payment_status,
+          payment_date: dayjs().format('YYYY-MM-DD'),
+          description: payment_description
+        });
+
+        // create order items
         const productsArray = products.map((item) => ({
           order_id: orderId,
           product_id: Number(item.product_id),
@@ -146,10 +161,10 @@ export const OrderForm = ({ className }: IProps) => {
           .from('order_items')
           .insert(productsArray);
 
-        if (orderItemError) {
+        if (orderItemError || paymentError) {
           console.error('order item error:', orderItemError);
 
-          throw orderItemError;
+          throw orderItemError || paymentError;
         }
 
         // show success notification
@@ -169,6 +184,8 @@ export const OrderForm = ({ className }: IProps) => {
         color: 'red'
       });
       console.error('order error:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -322,6 +339,13 @@ export const OrderForm = ({ className }: IProps) => {
               Ortiqcha: {remainingDebt} {form.getValues().currency}
             </Text>
           )}
+
+          <Textarea
+            resize="vertical"
+            label="To'lov haqida ma'lumot"
+            key={form.key('payment_description')}
+            {...form.getInputProps('payment_description')}
+          />
         </div>
       </Fieldset>
 
@@ -360,6 +384,7 @@ export const OrderForm = ({ className }: IProps) => {
         color="green"
         mt={20}
         className="max-w-min"
+        disabled={isSubmitting}
       >
         Buyurtmani qo'shish
       </Button>
