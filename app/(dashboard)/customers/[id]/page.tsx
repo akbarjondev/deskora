@@ -21,7 +21,7 @@ export default async function OrdersSinglePage({
     .eq('id', id);
 
   // their orders
-  const orders = await getCustomerOrders(id);
+  const orders = (await getCustomerOrders(id)) || [];
 
   if (customerData?.length === 0) {
     notFound();
@@ -32,6 +32,30 @@ export default async function OrdersSinglePage({
   }
 
   const customer = customerData[0];
+
+  // total purchases in all currencies
+  const purchasesInCurrencies: Record<string, number> = {};
+  const debtsInCurrencies: Record<string, number> = {};
+
+  orders.forEach((order) => {
+    if (order.currency) {
+      if (order.currency in purchasesInCurrencies) {
+        purchasesInCurrencies[order.currency] += order.total_price;
+      } else {
+        purchasesInCurrencies[order.currency] = order.total_price;
+      }
+    }
+  });
+
+  orders.forEach((order) => {
+    if (order.currency) {
+      if (order.currency in debtsInCurrencies) {
+        debtsInCurrencies[order.currency] += order.remaining_debt || 0;
+      } else {
+        debtsInCurrencies[order.currency] = order.remaining_debt || 0;
+      }
+    }
+  });
 
   return (
     <Card>
@@ -49,7 +73,7 @@ export default async function OrdersSinglePage({
         <CardTitle>Mijoz ma'lumotlari va barcha buyurtmalar</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-4">
+        <div className="flex gap-5">
           <div>
             <Title order={5}>Ism:</Title>
             <p>{customer.name}</p>
@@ -57,6 +81,28 @@ export default async function OrdersSinglePage({
           <div>
             <Title order={5}>Telefon raqam:</Title>
             <p>{customer.phone}</p>
+          </div>
+          <div>
+            <Title order={5}>Mahsulot sotildi:</Title>
+            <p>
+              {Object.entries(purchasesInCurrencies).map(
+                ([currency, total]) => (
+                  <div className="border-b" key={currency}>
+                    {total} {currency}
+                  </div>
+                )
+              )}
+            </p>
+          </div>
+          <div>
+            <Title order={5}>Qarz:</Title>
+            <p>
+              {Object.entries(debtsInCurrencies).map(([currency, total]) => (
+                <div className="border-b" key={currency}>
+                  {total} {currency}
+                </div>
+              ))}
+            </p>
           </div>
           <div>
             <Title order={5}>Manzil va izoh:</Title>
