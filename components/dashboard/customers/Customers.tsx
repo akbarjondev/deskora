@@ -2,6 +2,7 @@
 
 import { ConfirmModal } from '@/components/dashboard/common/ConfirmModal';
 import { SettingsPopover } from '@/components/dashboard/common/SettingsPopover';
+import { PAGE_SIZE } from '@/core/consts';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { Button, Group, Select, Table } from '@mantine/core';
@@ -37,7 +38,7 @@ interface Props {
   customers: ClientType[];
 }
 
-const Clients = ({ customers }: Props) => {
+export const Customers = ({ customers }: Props) => {
   const [opened, { close, open }] = useDisclosure();
   const [itemId, setItemId] = useState<number>();
   const [sorting, setSorting] = useState([
@@ -46,7 +47,10 @@ const Clients = ({ customers }: Props) => {
       desc: true
     }
   ]);
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: PAGE_SIZE
+  });
 
   const columns = useMemo(
     () => [
@@ -213,5 +217,3 @@ const Clients = ({ customers }: Props) => {
     </>
   );
 };
-
-export default Clients;

@@ -68,9 +68,9 @@ CREATE TABLE
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     order_id BIGINT NOT NULL,
     payment_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    payment_type TEXT CHECK (
-      payment_type IN ('full', 'partial', 'BNPL', 'debt')
-    ) NOT NULL,
+    -- payment_type TEXT CHECK (
+    --   payment_type IN ('full', 'partial', 'BNPL', 'debt')
+    -- ) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     description TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

@@ -71,7 +71,7 @@ function DesktopNav() {
           <Package className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href={ROUTES.clients} label="Mijozlar">
+        <NavItem href={ROUTES.customers} label="Mijozlar">
           <Users2 className="h-5 w-5" />
         </NavItem>
       </nav>
@@ -132,7 +132,7 @@ function MobileNav() {
             Mahsulotlar
           </Link>
           <Link
-            href={ROUTES.clients}
+            href={ROUTES.customers}
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <Users2 className="h-5 w-5" />

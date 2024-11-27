@@ -58,6 +58,7 @@ const supabase = createClient();
 export const OrderForm = ({ className }: IProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const form = useForm<TOrderFormProps>({
     mode: 'controlled',
@@ -111,7 +112,6 @@ export const OrderForm = ({ className }: IProps) => {
       total_paid,
       currency,
       delivery_address,
-      delivery_date,
       products,
       payment_description
     } = values;
@@ -131,7 +131,7 @@ export const OrderForm = ({ className }: IProps) => {
           total_paid,
           currency,
           delivery_address,
-          delivery_date: delivery_date ?? dayjs().format('YYYY-MM-DD')
+          delivery_date: dayjs(currentDate).format('YYYY-MM-DD')
         })
         .select('*');
 
@@ -144,8 +144,7 @@ export const OrderForm = ({ className }: IProps) => {
         const { error: paymentError } = await supabase.from('payments').insert({
           order_id: orderId,
           amount: total_paid || 0,
-          payment_type: payment_status,
-          payment_date: dayjs().format('YYYY-MM-DD'),
+          payment_date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
           description: payment_description
         });
 
@@ -373,7 +372,12 @@ export const OrderForm = ({ className }: IProps) => {
             allowDeselect
             locale="uz"
             key={form.key('delivery_date')}
-            {...form.getInputProps('delivery_date')}
+            value={currentDate}
+            onChange={(date) => {
+              if (date) {
+                setCurrentDate(date);
+              }
+            }}
           />
         </div>
       </Fieldset>

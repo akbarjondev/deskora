@@ -1,11 +1,15 @@
 import { PaymentMethod, PaymentStatus, TPaymentType } from './types';
+
+export const PAGE_SIZE = 10;
+
 export const ROUTES = {
   home: '/',
   orders: '/orders',
   newOrder: '/orders/new',
-  clients: '/clients',
+  customers: '/customers',
   products: '/products',
-  settings: '/settings'
+  settings: '/settings',
+  singleCustomer: (id: string | number) => `/customers/${id}`
 };
 
 export const errors: Record<number, string> = {

@@ -1,5 +1,5 @@
-import { AddClientButton } from '@/components/dashboard/clients/AddClientButton';
-import { AddClientModal } from '@/components/dashboard/clients/AddClientModal';
+import { AddClientButton } from '@/components/dashboard/customers/AddClientButton';
+import { AddClientModal } from '@/components/dashboard/customers/AddClientModal';
 import {
   Card,
   CardContent,
@@ -10,7 +10,11 @@ import {
 import { createClient } from '@/lib/supabase/server';
 import dynamic from 'next/dynamic';
 
-const Clients = dynamic(() => import('@/components/dashboard/clients/Clients'));
+const Clients = dynamic(() =>
+  import('@/components/dashboard/customers/Customers').then(
+    (mod) => mod.Customers
+  )
+);
 
 export default async function CLientsPage() {
   const supabase = await createClient();

@@ -1,9 +1,10 @@
 'use client';
 
-import { paymentMethodOptions } from '@/core/consts';
+import { ProductPill } from '@/components/dashboard/common/ProductPill';
+import { PAGE_SIZE, paymentMethodOptions, ROUTES } from '@/core/consts';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import { Badge, Button, Group, Select, Table, Tooltip } from '@mantine/core';
+import { Button, Group, Select, Table, Tooltip } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
   createColumnHelper,
@@ -21,6 +22,7 @@ import {
   ArrowUp,
   ArrowUpDown
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { OrdersWithCustomerAndOrderItems } from 'requests/orders/getAllOrders';
 
@@ -34,13 +36,17 @@ interface IProps {
 }
 
 const Orders = ({ orders }: IProps) => {
+  const router = useRouter();
   const [sorting, setSorting] = useState([
     {
       id: 'id',
       desc: true
     }
   ]);
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: PAGE_SIZE
+  });
 
   const columns = useMemo(
     () => [
@@ -61,15 +67,11 @@ const Orders = ({ orders }: IProps) => {
         cell: ({ row: { original } }) => (
           <div className="flex gap-1">
             {original?.order_items?.map((item) => (
-              <div
-                className="flex px-1 py-1 gap-1 bg-slate-500 text-white font-semibold text-sm rounded-full"
+              <ProductPill
                 key={item.id}
-              >
-                {item.products?.name}{' '}
-                <Badge color="lime.5" circle>
-                  {item.quantity}
-                </Badge>
-              </div>
+                name={item.products?.name ?? item.product_id}
+                quantity={item.quantity}
+              />
             ))}
           </div>
         )
@@ -153,7 +155,7 @@ const Orders = ({ orders }: IProps) => {
 
   return (
     <>
-      <Table striped withColumnBorders>
+      <Table striped withColumnBorders highlightOnHover>
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Tr key={headerGroup.id}>
@@ -186,7 +188,13 @@ const Orders = ({ orders }: IProps) => {
         </Table.Thead>
         <Table.Tbody>
           {table.getRowModel().rows.map((row) => (
-            <Table.Tr key={row.id}>
+            <Table.Tr
+              onClick={() => {
+                router.push(ROUTES.singleCustomer(row.original.customer_id));
+              }}
+              key={row.id}
+              className="cursor-pointer"
+            >
               {row.getVisibleCells().map((cell) => (
                 <Table.Td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
