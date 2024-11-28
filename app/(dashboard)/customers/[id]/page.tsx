@@ -9,9 +9,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCustomerOrders } from 'requests/customers/getCustomerOrders';
 
-export default async function OrdersSinglePage({
-  params: { id }
-}: PageProps<'id'>) {
+export default async function OrdersSinglePage({ params }: PageProps<'id'>) {
+  const { id } = await params;
   const supabase = await createClient();
 
   // customer data
