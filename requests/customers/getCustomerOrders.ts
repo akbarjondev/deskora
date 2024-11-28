@@ -8,7 +8,7 @@ export const getCustomerOrders = async (customerId: string) => {
     .select(`*, order_items (*, products (*)), payments (*)`)
     .eq('customer_id', customerId);
 
-  return orders;
+  return orders || [];
 };
 
 export type CustomerWithOrderItemsAndPayments = Awaited<

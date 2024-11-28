@@ -2,6 +2,8 @@
 
 import { ProductPill } from '@/components/dashboard/common/ProductPill';
 import { PAGE_SIZE, paymentMethodOptions, ROUTES } from '@/core/consts';
+import { formatPrice } from '@/core/helpers/formatPrice';
+import { TCurrency } from '@/core/types';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { Button, Group, Select, Table, Tooltip } from '@mantine/core';
@@ -89,7 +91,7 @@ const Orders = ({ orders }: IProps) => {
         header: 'Umumiy summa',
         cell: ({ row: { original } }) => (
           <div>
-            {original.total_price} {original.currency}
+            {formatPrice(original.total_price, original.currency as TCurrency)}
           </div>
         )
       }),
@@ -97,7 +99,10 @@ const Orders = ({ orders }: IProps) => {
         header: "To'langan summa",
         cell: ({ row: { original } }) => (
           <div>
-            {original.total_paid} {original.currency}
+            {formatPrice(
+              original.total_paid || 0,
+              original.currency as TCurrency
+            )}
           </div>
         )
       }),
@@ -105,7 +110,10 @@ const Orders = ({ orders }: IProps) => {
         header: 'Qolgan qarz',
         cell: ({ row: { original } }) => (
           <div>
-            {original.remaining_debt} {original.currency}
+            {formatPrice(
+              original.remaining_debt || 0,
+              original.currency as TCurrency
+            )}
           </div>
         )
       }),

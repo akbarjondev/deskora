@@ -1,8 +1,9 @@
-import { SingleCustomer } from '@/components/dashboard/customers/SingleCustomer';
+import { CustomerOrdersTable } from '@/components/dashboard/customers/CustomerOrdersTable';
+import { SingleCustomerTable } from '@/components/dashboard/customers/SingleCustomerTable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ROUTES } from '@/core/consts';
 import { createClient } from '@/lib/supabase/server';
-import { Button, Title } from '@mantine/core';
+import { Button } from '@mantine/core';
 import dayjs from 'dayjs';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -72,48 +73,19 @@ export default async function OrdersSinglePage({ params }: PageProps<'id'>) {
         <CardTitle>Mijoz ma'lumotlari va barcha buyurtmalar</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-5">
-          <div>
-            <Title order={5}>Ism:</Title>
-            <p>{customer.name}</p>
-          </div>
-          <div>
-            <Title order={5}>Telefon raqam:</Title>
-            <p>{customer.phone}</p>
-          </div>
-          <div>
-            <Title order={5}>Mahsulot sotildi:</Title>
-            <p>
-              {Object.entries(purchasesInCurrencies).map(
-                ([currency, total]) => (
-                  <div className="border-b" key={currency}>
-                    {total} {currency}
-                  </div>
-                )
-              )}
-            </p>
-          </div>
-          <div>
-            <Title order={5}>Qarz:</Title>
-            <p>
-              {Object.entries(debtsInCurrencies).map(([currency, total]) => (
-                <div className="border-b" key={currency}>
-                  {total} {currency}
-                </div>
-              ))}
-            </p>
-          </div>
-          <div>
-            <Title order={5}>Manzil va izoh:</Title>
-            <p>{customer.address || '-'}</p>
-          </div>
-          <div>
-            <Title order={5}>Qachon qo'shilgan:</Title>
-            <p>{dayjs(customer.created_at).format('DD.MM.YYYY')}</p>
-          </div>
-        </div>
+        <SingleCustomerTable
+          customer={{
+            id: customer.id,
+            name: customer.name || '-',
+            phone: customer.phone,
+            address: customer.address,
+            purchasesInCurrencies,
+            debtsInCurrencies,
+            registeredAt: dayjs(customer.created_at).format('DD.MM.YYYY')
+          }}
+        />
 
-        <SingleCustomer className="mt-10" orders={orders} />
+        {orders && <CustomerOrdersTable className="mt-10" orders={orders} />}
       </CardContent>
     </Card>
   );

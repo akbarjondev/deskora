@@ -48,3 +48,13 @@ export enum PaymentType {
 }
 
 export type TPaymentType = keyof typeof PaymentType;
+
+export interface ISingleCustomer {
+  id: number;
+  name: string;
+  phone: string | null;
+  address: string | null;
+  registeredAt: string;
+  purchasesInCurrencies: Record<string, number>;
+  debtsInCurrencies: Record<string, number>;
+}
