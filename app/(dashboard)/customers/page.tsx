@@ -10,10 +10,8 @@ import {
 import { createClient } from '@/lib/supabase/server';
 import dynamic from 'next/dynamic';
 
-const Clients = dynamic(() =>
-  import('@/components/dashboard/customers/Customers').then(
-    (mod) => mod.Customers
-  )
+const Clients = dynamic(
+  () => import('@/components/dashboard/customers/Customers')
 );
 
 export default async function CLientsPage() {
