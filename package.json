@@ -7,12 +7,12 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@mantine/charts": "^7.14.3",
     "@mantine/core": "^7.13.4",
     "@mantine/dates": "^7.14.1",
     "@mantine/form": "^7.13.4",
     "@mantine/hooks": "^7.13.4",
     "@mantine/notifications": "^7.13.4",
+    "@next/bundle-analyzer": "^15.0.3",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
@@ -40,7 +40,6 @@
     "prop-types": "^15.8.1",
     "react": "19.0.0-rc-cd22717c-20241013",
     "react-dom": "19.0.0-rc-cd22717c-20241013",
-    "recharts": "2",
     "server-only": "^0.0.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss": "^3.4.4",

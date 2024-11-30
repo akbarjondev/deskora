@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatPrice } from '@/core/helpers/formatPrice';
-import { LineChart } from '@mantine/charts';
-import { Title } from '@mantine/core';
 import {
   DollarSign,
   HandCoins,
@@ -67,33 +65,6 @@ export default async function MainPage() {
           </CardContent>
         </Card>
       </div>
-
-      <div>
-        <Title order={2} mt={40}>
-          Sotuvlar
-        </Title>
-        <LineChart
-          mt={10}
-          h={300}
-          data={data}
-          dataKey="date"
-          series={[{ name: 'sotuvlar', color: 'dark' }]}
-          curveType="natural"
-        />
-      </div>
     </div>
   );
 }
-
-const data = [
-  { date: '2024-01-01', sotuvlar: 1000 },
-  { date: '2024-01-02', sotuvlar: 2000 },
-  { date: '2024-01-03', sotuvlar: 1500 },
-  { date: '2024-01-04', sotuvlar: 3000 },
-  { date: '2024-01-05', sotuvlar: 2500 },
-  { date: '2024-01-06', sotuvlar: 4000 },
-  { date: '2024-01-07', sotuvlar: 3500 },
-  { date: '2024-01-08', sotuvlar: 5000 },
-  { date: '2024-01-09', sotuvlar: 4500 },
-  { date: '2024-01-10', sotuvlar: 6000 }
-];
