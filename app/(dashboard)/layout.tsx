@@ -1,22 +1,16 @@
 import Link from 'next/link';
 import {
   Home,
-  LineChart,
+  LayoutDashboard,
   Package,
   Package2,
   PanelLeft,
-  Settings,
   ShoppingCart,
   Users2
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
 import { User } from '../../components/dashboard/navigation/user';
 import { NavItem } from '../../components/dashboard/navigation/nav-item';
 import { SearchInput } from '../../components/dashboard/navigation/search';
@@ -51,21 +45,16 @@ function DesktopNav() {
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-        {/* <Link
+        <Link
           href={ROUTES.home}
           className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
         >
-          <VercelLogo className="h-3 w-3 transition-all group-hover:scale-110" />
-        </Link> */}
+          <LayoutDashboard size={20} className="h-5 w-5" />
+        </Link>
 
-        <NavItem href={ROUTES.home} label="Ish stol">
-          {/* <Home className="h-5 w-5" /> */}
+        <NavItem href={ROUTES.orders} label="Ish stol">
           <ShoppingCart className="h-5 w-5" />
         </NavItem>
-
-        {/* <NavItem href={ROUTES.orders} label="Buyurtmalar">
-          <ShoppingCart className="h-5 w-5" />
-        </NavItem> */}
 
         <NavItem href={ROUTES.products} label="Mahsulotlar">
           <Package className="h-5 w-5" />
@@ -75,7 +64,7 @@ function DesktopNav() {
           <Users2 className="h-5 w-5" />
         </NavItem>
       </nav>
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
+      {/* <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
@@ -88,7 +77,7 @@ function DesktopNav() {
           </TooltipTrigger>
           <TooltipContent side="right">Sozlamalar</TooltipContent>
         </Tooltip>
-      </nav>
+      </nav> */}
     </aside>
   );
 }
@@ -126,7 +115,7 @@ function MobileNav() {
           </Link>
           <Link
             href={ROUTES.products}
-            className="flex items-center gap-4 px-2.5 text-foreground"
+            className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <Package className="h-5 w-5" />
             Mahsulotlar
@@ -138,13 +127,13 @@ function MobileNav() {
             <Users2 className="h-5 w-5" />
             Mijozlar
           </Link>
-          <Link
+          {/* <Link
             href={ROUTES.settings}
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
             <LineChart className="h-5 w-5" />
             Sozlamalar
-          </Link>
+          </Link> */}
         </nav>
       </SheetContent>
     </Sheet>

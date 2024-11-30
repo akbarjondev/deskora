@@ -14,5 +14,5 @@ export function formatDate(
     return '-';
   }
 
-  return dayjs.tz(date, 'Asia/Tashkent').format(format);
+  return dayjs(date).format(format);
 }

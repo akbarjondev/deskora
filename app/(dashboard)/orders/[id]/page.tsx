@@ -5,6 +5,7 @@ import { AddPaymentButton } from '@/components/dashboard/payments/AddPaymentButt
 import { AddPaymentModal } from '@/components/dashboard/payments/AddPaymentModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ROUTES } from '@/core/consts';
+import { formatDate } from '@/core/helpers/formatDate';
 import { TCurrency } from '@/core/types';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@mantine/core';
@@ -80,7 +81,7 @@ export default async function PaymentPage({ params }: PageProps<'id'>) {
               currency: order.currency as TCurrency,
               payment_method: order.payment_method || '',
               delivery_address: order.delivery_address || '',
-              order_date: order.created_at || ''
+              order_date: formatDate(order.order_date)
             }}
           />
 

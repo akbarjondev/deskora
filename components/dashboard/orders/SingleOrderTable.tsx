@@ -1,7 +1,6 @@
 'use client';
 
 import { paymentMethodOptions } from '@/core/consts';
-import { formatDate } from '@/core/helpers/formatDate';
 import { formatPrice } from '@/core/helpers/formatPrice';
 import { ISingleOrder, TCurrency } from '@/core/types';
 import { Table, TableData } from '@mantine/core';
@@ -37,7 +36,7 @@ export const SingleOrderTable = ({ order }: IProps) => {
     body: [
       [
         id,
-        formatDate(order_date),
+        order_date,
         <div className="flex gap-1">{products}</div>,
         formatPrice(total_price, currency as TCurrency),
         formatPrice(total_paid || 0, currency as TCurrency),
