@@ -63,6 +63,7 @@ export default function LoginPage() {
               type="submit"
               formAction={formLoginAction}
               disabled={pending}
+              loading={pending}
             >
               Kirish
             </Button>

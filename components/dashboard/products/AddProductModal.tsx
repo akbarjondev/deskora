@@ -7,7 +7,7 @@ import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import { useQueryClient } from '@tanstack/react-query';
 import { errors } from 'core/consts';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { closeModal, useModalStore } from 'store/useModalStore';
 
 type FormProps = Omit<Tables<'products'>, 'id' | 'created_at' | 'updated_at'>;
@@ -22,6 +22,7 @@ const initialValues: FormProps = {
 };
 
 export const AddProductModal = memo(() => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isOpen = useModalStore((state) => state.current) === 'ADD_PRODUCT';
   const data = useModalStore((state) => state.data);
   const queryClient = useQueryClient();
@@ -43,6 +44,8 @@ export const AddProductModal = memo(() => {
   }, [productId, defaultValues]);
 
   const handleSubmit = async (values: FormProps) => {
+    setIsSubmitting(true);
+
     try {
       if (!productId) {
         await supabase.from('products').insert({
@@ -91,6 +94,7 @@ export const AddProductModal = memo(() => {
       console.error('add product error:', error);
     } finally {
       form.reset();
+      setIsSubmitting(false);
     }
   };
 
@@ -133,7 +137,9 @@ export const AddProductModal = memo(() => {
           {...form.getInputProps('description')}
         />
 
-        <Button type="submit">{isEditForm ? 'Tahrirlash' : "Qo'shish"}</Button>
+        <Button loading={isSubmitting} disabled={isSubmitting} type="submit">
+          {isEditForm ? 'Tahrirlash' : "Qo'shish"}
+        </Button>
       </form>
     </Modal>
   );

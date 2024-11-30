@@ -7,7 +7,7 @@ import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import { useQueryClient } from '@tanstack/react-query';
 import { errors } from 'core/consts';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { closeModal, useModalStore } from 'store/useModalStore';
 
 type FormProps = Omit<Tables<'customers'>, 'id'>;
@@ -21,6 +21,7 @@ const initialValues: Partial<FormProps> = {
 };
 
 export const AddClientModal = memo(() => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isOpen = useModalStore((state) => state.current) === 'ADD_CLIENT';
   const data = useModalStore((state) => state.data);
   const queryClient = useQueryClient();
@@ -50,6 +51,8 @@ export const AddClientModal = memo(() => {
   };
 
   const handleSubmit = async (values: Partial<FormProps>) => {
+    setIsSubmitting(true);
+
     try {
       if (!clientId) {
         const res = await supabase.from('customers').insert({
@@ -113,6 +116,7 @@ export const AddClientModal = memo(() => {
       console.error('add client error:', error);
     } finally {
       form.reset();
+      setIsSubmitting(false);
     }
   };
 
@@ -149,7 +153,9 @@ export const AddClientModal = memo(() => {
           {...form.getInputProps('address')}
         />
 
-        <Button type="submit">{isEditForm ? 'Tahrirlash' : "Qo'shish"}</Button>
+        <Button disabled={isSubmitting} loading={isSubmitting} type="submit">
+          {isEditForm ? 'Tahrirlash' : "Qo'shish"}
+        </Button>
       </form>
     </Modal>
   );

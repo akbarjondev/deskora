@@ -6,7 +6,7 @@ export const getSingleOrderPayments = cache(async (orderId: string) => {
 
   const { data: payments } = await supabase
     .from('payments')
-    .select()
+    .select('*, orders(currency)')
     .eq('order_id', orderId);
 
   return payments || [];

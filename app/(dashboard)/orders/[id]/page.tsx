@@ -1,6 +1,8 @@
 import { ProductPill } from '@/components/dashboard/common/ProductPill';
 import { OrderPaymentsTable } from '@/components/dashboard/orders/OrderPaymentsTable';
 import { SingleOrderTable } from '@/components/dashboard/orders/SingleOrderTable';
+import { AddPaymentButton } from '@/components/dashboard/payments/AddPaymentButton';
+import { AddPaymentModal } from '@/components/dashboard/payments/AddPaymentModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ROUTES } from '@/core/consts';
 import { TCurrency } from '@/core/types';
@@ -36,48 +38,62 @@ export default async function PaymentPage({ params }: PageProps<'id'>) {
   const order = orderData[0];
 
   return (
-    <Card>
-      <Button
-        component={Link}
-        href={ROUTES.orders}
-        className="mt-6 ml-6"
-        leftSection={<ArrowLeft size={16} />}
-        variant="outline"
-        color="dark"
-      >
-        Orqaga
-      </Button>
-      <CardHeader className="flex-row justify-between">
-        <CardTitle>Buyurtma va barcha to'lovlar</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <SingleOrderTable
-          order={{
-            id: order.id,
-            products: order.order_items.map((item) => (
-              <ProductPill
-                key={item.id}
-                name={item.products?.name || ''}
-                quantity={item.quantity}
-              />
-            )),
-            total_price: order.total_price,
-            total_paid: order.payments.reduce(
-              (acc, curr) => acc + curr.amount,
-              0
-            ),
-            remaining_debt: order.remaining_debt || 0,
-            currency: order.currency as TCurrency,
-            payment_method: order.payment_method || '',
-            delivery_address: order.delivery_address || '',
-            order_date: order.created_at || ''
-          }}
-        />
+    <>
+      <Card>
+        <div className="p-6 flex items-center justify-between">
+          <Button
+            component={Link}
+            href={ROUTES.orders}
+            leftSection={<ArrowLeft size={16} />}
+            variant="outline"
+            color="dark"
+          >
+            Orqaga
+          </Button>
 
-        {payments && payments.length > 0 && (
-          <OrderPaymentsTable className="mt-10" payments={payments} />
-        )}
-      </CardContent>
-    </Card>
+          {!!order.remaining_debt && order.remaining_debt > 0 && (
+            <AddPaymentButton />
+          )}
+        </div>
+
+        <CardHeader className="flex-row justify-between">
+          <CardTitle>Buyurtma va barcha to'lovlar</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <SingleOrderTable
+            order={{
+              id: order.id,
+              products: order.order_items.map((item) => (
+                <ProductPill
+                  key={item.id}
+                  name={item.products?.name || ''}
+                  quantity={item.quantity}
+                />
+              )),
+              total_price: order.total_price,
+              total_paid: order.payments.reduce(
+                (acc, curr) => acc + curr.amount,
+                0
+              ),
+              remaining_debt: order.remaining_debt || 0,
+              currency: order.currency as TCurrency,
+              payment_method: order.payment_method || '',
+              delivery_address: order.delivery_address || '',
+              order_date: order.created_at || ''
+            }}
+          />
+
+          {payments && payments.length > 0 && (
+            <OrderPaymentsTable
+              className="mt-10"
+              orderId={id}
+              payments={payments}
+            />
+          )}
+        </CardContent>
+      </Card>
+      <AddPaymentModal orderId={id} />
+    </>
   );
 }

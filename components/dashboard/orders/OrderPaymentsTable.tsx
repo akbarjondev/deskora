@@ -2,8 +2,12 @@
 
 import { PAGE_SIZE } from '@/core/consts';
 import { formatDate } from '@/core/helpers/formatDate';
+import { formatPrice } from '@/core/helpers/formatPrice';
+import { TCurrency } from '@/core/types';
+import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { Button, Group, Select, Table } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 import {
   createColumnHelper,
   flexRender,
@@ -19,7 +23,7 @@ import {
   ArrowUp,
   ArrowUpDown
 } from 'lucide-react';
-import { useState } from 'react';
+import { cache, useState } from 'react';
 import {
   TSingleOrderPayment,
   TSingleOrderPayments
@@ -27,6 +31,7 @@ import {
 
 interface IProps {
   payments: TSingleOrderPayments;
+  orderId: string;
   className?: string;
 }
 
@@ -43,14 +48,38 @@ const columns = [
     )
   }),
   columnHelper.accessor('amount', {
-    header: 'Summa'
+    header: 'Summa',
+    cell: ({ row: { original } }) => (
+      <div>
+        {formatPrice(original.amount, original.orders?.currency as TCurrency)}
+      </div>
+    )
   }),
   columnHelper.accessor('description', {
     header: 'Izoh'
   })
 ];
 
-export const OrderPaymentsTable = ({ payments, className }: IProps) => {
+const supabase = createClient();
+
+export const OrderPaymentsTable = ({
+  payments,
+  orderId,
+  className
+}: IProps) => {
+  const { data } = useQuery({
+    queryKey: ['order-payments', orderId],
+    queryFn: cache(async () => {
+      const { data } = await supabase
+        .from('payments')
+        .select('*, orders(currency)')
+        .eq('order_id', orderId);
+
+      return data || [];
+    }),
+    initialData: payments
+  });
+
   const [sorting, setSorting] = useState([
     {
       id: 'id',
@@ -64,7 +93,7 @@ export const OrderPaymentsTable = ({ payments, className }: IProps) => {
 
   const table = useReactTable({
     columns,
-    data: payments,
+    data,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
