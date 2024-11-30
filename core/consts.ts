@@ -9,7 +9,9 @@ export const ROUTES = {
   customers: '/customers',
   products: '/products',
   settings: '/settings',
-  singleCustomer: (id: string | number) => `/customers/${id}`
+  singleCustomer: (id: string | number) => `/customers/${id}`,
+  singlePayment: (id: string | number) => `/payments/${id}`,
+  singleOrder: (id: string | number) => `/orders/${id}`
 };
 
 export const errors: Record<number, string> = {

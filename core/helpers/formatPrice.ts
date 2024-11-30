@@ -5,6 +5,8 @@ const currencies: Record<TCurrency, string> = {
   USD: 'USD'
 };
 
-export const formatPrice = (amount: number, currency: TCurrency) => {
+export const formatPrice = (amount?: number, currency?: TCurrency) => {
+  if (!amount || !currency) return '-';
+
   return `${amount.toLocaleString()} ${currencies[currency]}`;
 };

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
+import { cache } from 'react';
 
 interface IGetAllCustomers {
   search?: string;
@@ -6,7 +7,7 @@ interface IGetAllCustomers {
 
 const supabase = createClient();
 
-export const getAllCustomers = async (props?: IGetAllCustomers) => {
+export const getAllCustomers = cache(async (props?: IGetAllCustomers) => {
   let query = supabase.from('customers').select('*');
 
   // Apply conditional search only if 'search' is provided
@@ -21,4 +22,4 @@ export const getAllCustomers = async (props?: IGetAllCustomers) => {
   }
 
   return data;
-};
+});

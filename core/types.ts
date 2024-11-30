@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export enum MODAL_TYPES {
   CONFIRM = 'CONFIRM',
   ADD_PRODUCT = 'ADD_PRODUCT',
@@ -57,4 +59,16 @@ export interface ISingleCustomer {
   registeredAt: string;
   purchasesInCurrencies: Record<string, number>;
   debtsInCurrencies: Record<string, number>;
+}
+
+export interface ISingleOrder {
+  id: number;
+  products: ReactNode[];
+  total_price: number;
+  total_paid: number;
+  remaining_debt: number;
+  currency: string;
+  payment_method: string;
+  delivery_address: string;
+  order_date: string;
 }

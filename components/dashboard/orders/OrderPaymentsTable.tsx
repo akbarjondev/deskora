@@ -1,10 +1,7 @@
 'use client';
 
-import { ProductPill } from '@/components/dashboard/common/ProductPill';
-import { PAGE_SIZE, paymentMethodOptions, ROUTES } from '@/core/consts';
+import { PAGE_SIZE } from '@/core/consts';
 import { formatDate } from '@/core/helpers/formatDate';
-import { formatPrice } from '@/core/helpers/formatPrice';
-import { TCurrency } from '@/core/types';
 import { cn } from '@/lib/utils';
 import { Button, Group, Select, Table } from '@mantine/core';
 import {
@@ -22,93 +19,38 @@ import {
   ArrowUp,
   ArrowUpDown
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { CustomerWithOrderItemsAndPayments } from 'requests/customers/getCustomerOrders';
+import {
+  TSingleOrderPayment,
+  TSingleOrderPayments
+} from 'requests/orders/getSingleOrderPayments';
 
 interface IProps {
-  orders: CustomerWithOrderItemsAndPayments;
+  payments: TSingleOrderPayments;
   className?: string;
 }
 
-const columnHelper =
-  createColumnHelper<NonNullable<CustomerWithOrderItemsAndPayments>[number]>();
+const columnHelper = createColumnHelper<TSingleOrderPayment>();
 
 const columns = [
   columnHelper.accessor('id', {
     header: 'Id'
   }),
-  columnHelper.accessor('order_date', {
+  columnHelper.accessor('payment_date', {
     header: 'Sana',
     cell: ({ row: { original } }) => (
-      <div>{formatDate(original.created_at)}</div>
+      <div>{formatDate(original.payment_date, 'DD.MM.YYYY HH:mm')}</div>
     )
   }),
-  columnHelper.accessor('order_items', {
-    header: 'Mahsulotlar',
-    cell: ({ row: { original } }) => (
-      <div className="flex gap-1">
-        {original?.order_items?.map((item) => (
-          <ProductPill
-            key={item.id}
-            name={item.products?.name ?? item.product_id}
-            quantity={item.quantity}
-          />
-        ))}
-      </div>
-    )
+  columnHelper.accessor('amount', {
+    header: 'Summa'
   }),
-  columnHelper.accessor('total_price', {
-    header: 'Summa',
-    cell: ({ row: { original } }) => (
-      <div>
-        {formatPrice(original.total_price, original.currency as TCurrency)}
-      </div>
-    )
-  }),
-  columnHelper.accessor('total_paid', {
-    header: "To'landi",
-    cell: ({ row: { original } }) => (
-      <div>
-        {formatPrice(original.total_paid || 0, original.currency as TCurrency)}
-      </div>
-    )
-  }),
-  columnHelper.accessor('remaining_debt', {
-    header: 'Qarz',
-    cell: ({ row: { original } }) => (
-      <div>
-        {formatPrice(
-          original.remaining_debt || 0,
-          original.currency as TCurrency
-        )}
-      </div>
-    )
-  }),
-  columnHelper.accessor('payment_method', {
-    header: "To'lov usuli",
-    cell: ({ row: { original } }) => (
-      <div>
-        {
-          paymentMethodOptions.find((i) => i.value === original.payment_method)
-            ?.label
-        }
-      </div>
-    )
-  }),
-  columnHelper.accessor('delivery_date', {
-    header: 'Yetkazish sanasi',
-    cell: ({ row: { original } }) => (
-      <div>{formatDate(original.delivery_date, 'DD.MM.YYYY')}</div>
-    )
-  }),
-  columnHelper.accessor('delivery_address', {
-    header: 'Yetkazish manzili'
+  columnHelper.accessor('description', {
+    header: 'Izoh'
   })
 ];
 
-export const CustomerOrdersTable = ({ orders, className }: IProps) => {
-  const router = useRouter();
+export const OrderPaymentsTable = ({ payments, className }: IProps) => {
   const [sorting, setSorting] = useState([
     {
       id: 'id',
@@ -122,7 +64,7 @@ export const CustomerOrdersTable = ({ orders, className }: IProps) => {
 
   const table = useReactTable({
     columns,
-    data: orders,
+    data: payments,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -136,8 +78,8 @@ export const CustomerOrdersTable = ({ orders, className }: IProps) => {
 
   return (
     <div className={cn('flex flex-col', className)}>
-      <Table striped withColumnBorders highlightOnHover captionSide="top">
-        <Table.Caption>Barcha buyurtmalar</Table.Caption>
+      <Table striped withColumnBorders captionSide="top">
+        <Table.Caption>Barcha to'lovlar</Table.Caption>
 
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -171,13 +113,7 @@ export const CustomerOrdersTable = ({ orders, className }: IProps) => {
         </Table.Thead>
         <Table.Tbody>
           {table.getRowModel().rows.map((row) => (
-            <Table.Tr
-              key={row.id}
-              onClick={() => {
-                router.push(ROUTES.singleOrder(row.original.id));
-              }}
-              className="cursor-pointer"
-            >
+            <Table.Tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <Table.Td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

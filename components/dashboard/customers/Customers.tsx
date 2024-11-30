@@ -2,7 +2,7 @@
 
 import { ConfirmModal } from '@/components/dashboard/common/ConfirmModal';
 import { SettingsPopover } from '@/components/dashboard/common/SettingsPopover';
-import { PAGE_SIZE } from '@/core/consts';
+import { PAGE_SIZE, ROUTES } from '@/core/consts';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { Button, Group, Select, Table } from '@mantine/core';
@@ -25,6 +25,7 @@ import {
   ArrowUp,
   ArrowUpDown
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { openModal } from 'store/useModalStore';
 
@@ -39,6 +40,7 @@ interface Props {
 }
 
 export const Customers = ({ customers }: Props) => {
+  const router = useRouter();
   const [opened, { close, open }] = useDisclosure();
   const [itemId, setItemId] = useState<number>();
   const [sorting, setSorting] = useState([
@@ -139,7 +141,7 @@ export const Customers = ({ customers }: Props) => {
 
   return (
     <>
-      <Table striped withColumnBorders>
+      <Table striped withColumnBorders highlightOnHover>
         <Table.Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Tr key={headerGroup.id}>
@@ -172,7 +174,13 @@ export const Customers = ({ customers }: Props) => {
         </Table.Thead>
         <Table.Tbody>
           {table.getRowModel().rows.map((row) => (
-            <Table.Tr key={row.id}>
+            <Table.Tr
+              key={row.id}
+              className="cursor-pointer"
+              onClick={() => {
+                router.push(ROUTES.singleCustomer(row.original.id));
+              }}
+            >
               {row.getVisibleCells().map((cell) => (
                 <Table.Td key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

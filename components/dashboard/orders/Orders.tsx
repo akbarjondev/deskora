@@ -2,6 +2,7 @@
 
 import { ProductPill } from '@/components/dashboard/common/ProductPill';
 import { PAGE_SIZE, paymentMethodOptions, ROUTES } from '@/core/consts';
+import { formatDate } from '@/core/helpers/formatDate';
 import { formatPrice } from '@/core/helpers/formatPrice';
 import { TCurrency } from '@/core/types';
 import { createClient } from '@/lib/supabase/client';
@@ -16,7 +17,6 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import dayjs from 'dayjs';
 import {
   ArrowDown,
   ArrowLeft,
@@ -81,7 +81,7 @@ const Orders = ({ orders }: IProps) => {
       columnHelper.accessor('delivery_date', {
         header: 'Yetkazish sanasi',
         cell: ({ row: { original } }) => (
-          <div>{dayjs(original.delivery_date).format('DD.MM.YYYY')}</div>
+          <div>{formatDate(original.delivery_date, 'DD.MM.YYYY')}</div>
         )
       }),
       columnHelper.accessor('delivery_address', {
@@ -198,7 +198,7 @@ const Orders = ({ orders }: IProps) => {
           {table.getRowModel().rows.map((row) => (
             <Table.Tr
               onClick={() => {
-                router.push(ROUTES.singleCustomer(row.original.customer_id));
+                router.push(ROUTES.singleOrder(row.original.id));
               }}
               key={row.id}
               className="cursor-pointer"

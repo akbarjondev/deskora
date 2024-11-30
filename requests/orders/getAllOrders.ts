@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
+import { cache } from 'react';
 
-export const getAllOrdersServer = async () => {
+export const getAllOrdersServer = cache(async () => {
   const supabase = await createClient();
 
   const { data, error } = await supabase.from('orders').select(`
@@ -16,7 +17,7 @@ export const getAllOrdersServer = async () => {
   }
 
   return data;
-};
+});
 
 export type OrdersWithCustomerAndOrderItems = Awaited<
   ReturnType<typeof getAllOrdersServer>

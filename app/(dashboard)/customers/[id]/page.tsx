@@ -2,9 +2,9 @@ import { CustomerOrdersTable } from '@/components/dashboard/customers/CustomerOr
 import { SingleCustomerTable } from '@/components/dashboard/customers/SingleCustomerTable';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ROUTES } from '@/core/consts';
+import { formatDate } from '@/core/helpers/formatDate';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@mantine/core';
-import dayjs from 'dayjs';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -61,7 +61,7 @@ export default async function OrdersSinglePage({ params }: PageProps<'id'>) {
     <Card>
       <Button
         component={Link}
-        href={ROUTES.orders}
+        href={ROUTES.customers}
         className="mt-6 ml-6"
         leftSection={<ArrowLeft size={16} />}
         variant="outline"
@@ -81,7 +81,7 @@ export default async function OrdersSinglePage({ params }: PageProps<'id'>) {
             address: customer.address,
             purchasesInCurrencies,
             debtsInCurrencies,
-            registeredAt: dayjs(customer.created_at).format('DD.MM.YYYY')
+            registeredAt: formatDate(customer.created_at)
           }}
         />
 
